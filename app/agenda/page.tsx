@@ -3,8 +3,16 @@ import { PageHeader } from "@/components/page-header";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { AgendaCalendar } from "./agenda-calendar";
+import type { Profissional, Agendamento } from "@prisma/client";
 
 export const dynamic = "force-dynamic";
+
+type ProfissionalAgenda = Pick<Profissional, "id" | "nome" | "especialidade" | "cor">;
+
+interface AgendamentoComRelacoes extends Agendamento {
+  profissional: { nome: string; especialidade: string; cor: string };
+  paciente: { nome: string; telefone: string | null };
+}
 
 export default async function AgendaPage() {
   const [profissionais, agendamentos] = await Promise.all([
@@ -21,7 +29,7 @@ export default async function AgendaPage() {
       },
       orderBy: [{ data: "asc" }, { horaInicio: "asc" }],
     }),
-  ]);
+  ]) as [ProfissionalAgenda[], AgendamentoComRelacoes[]];
 
   return (
     <div className="pb-8">
@@ -40,13 +48,13 @@ export default async function AgendaPage() {
 
       <div className="px-8 py-6">
         <AgendaCalendar
-          profissionais={profissionais.map((p) => ({
+          profissionais={profissionais.map((p: ProfissionalAgenda) => ({
             id: p.id,
             nome: p.nome,
             especialidade: p.especialidade,
             cor: p.cor,
           }))}
-          agendamentos={agendamentos.map((a) => ({
+          agendamentos={agendamentos.map((a: AgendamentoComRelacoes) => ({
             id: a.id,
             profissionalId: a.profissionalId,
             data: a.data.toISOString(),
