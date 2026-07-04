@@ -4,6 +4,8 @@ import { Plus, Edit, Users } from "lucide-react";
 import Link from "next/link";
 import { formatarData } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 export default async function PacientesPage() {
   const pacientes = await prisma.paciente.findMany({
     orderBy: { nome: "asc" },

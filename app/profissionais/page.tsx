@@ -3,6 +3,8 @@ import { PageHeader } from "@/components/page-header";
 import { Plus, Edit, Stethoscope } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProfissionaisPage() {
   const profissionais = await prisma.profissional.findMany({
     orderBy: { nome: "asc" },

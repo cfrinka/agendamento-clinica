@@ -5,6 +5,8 @@ import { CalendarDays, Stethoscope, Users, Clock } from "lucide-react";
 import Link from "next/link";
 import { formatarData } from "@/lib/utils";
 
+export const dynamic = "force-dynamic";
+
 async function getDashboardData() {
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
