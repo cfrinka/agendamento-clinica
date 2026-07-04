@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Profissional {
+  id               Int                 @id @default(autoincrement())
+  nome             String
+  especialidade    String
+  email            String              @unique
+  telefone         String?
+  cor              String              @default("#3B82F6")
+  ativo            Boolean             @default(true)
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
+
+  agendamentos     Agendamento[]
+  horarios         HorarioAtendimento[]
+  datasBloqueadas  DatasBloqueada[]
+
+  @@map("profissionais")
+}
+
+model Paciente {
+  id              Int           @id @default(autoincrement())
+  nome            String
+  email           String?
+  telefone        String?
+  dataNascimento  DateTime?     @map("data_nascimento")
+  genero          String?
+  endereco        String?
+  observacoes     String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  agendamentos    Agendamento[]
+
+  @@map("pacientes")
+}
+
+model Agendamento {
+  id              Int           @id @default(autoincrement())
+  profissionalId  Int           @map("profissional_id")
+  pacienteId      Int           @map("paciente_id")
+  data            DateTime
+  horaInicio      String        @map("hora_inicio")
+  horaFim         String        @map("hora_fim")
+  status          String        @default("agendado")
+  observacoes     String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+
+  profissional    Profissional  @relation(fields: [profissionalId], references: [id])
+  paciente        Paciente      @relation(fields: [pacienteId], references: [id])
+
+  @@map("agendamentos")
+}
+
+model HorarioAtendimento {
+  id              Int           @id @default(autoincrement())
+  profissionalId  Int           @map("profissional_id")
+  diaSemana       Int           @map("dia_semana")
+  horaInicio      String        @map("hora_inicio")
+  horaFim         String        @map("hora_fim")
+  ativo           Boolean       @default(true)
+
+  profissional    Profissional  @relation(fields: [profissionalId], references: [id])
+
+  @@map("horarios_atendimento")
+}
+
+model DatasBloqueada {
+  id              Int           @id @default(autoincrement())
+  profissionalId  Int           @map("profissional_id")
+  data            DateTime
+  motivo          String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  profissional    Profissional  @relation(fields: [profissionalId], references: [id])
+
+  @@map("datas_bloqueadas")
+}
