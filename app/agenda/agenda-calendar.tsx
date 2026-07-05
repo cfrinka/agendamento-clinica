@@ -85,9 +85,9 @@ export function AgendaCalendar({ profissionais, agendamentos }: AgendaCalendarPr
   const weekLabel = `${format(weekStart, "dd/MM", { locale: ptBR })} - ${format(weekEnd, "dd/MM/yyyy", { locale: ptBR })}`;
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden border border-border shadow-sm">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 px-4 py-3 border-b">
+      <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 border-b border-border bg-muted">
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => setCurrentDate(new Date())}>
             Hoje

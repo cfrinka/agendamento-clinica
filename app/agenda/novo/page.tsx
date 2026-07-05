@@ -90,17 +90,20 @@ export default function NovoAgendamento() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-2xl">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" render={<Link href="/agenda" />}>
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Novo Agendamento</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Agendar nova consulta
+          <p className="text-sm uppercase tracking-[0.24em] text-muted-foreground/70 mb-2">
+            Novo agendamento
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight">Agendar Consulta</h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Informações da nova consulta
           </p>
         </div>
+        <Button variant="outline" render={<Link href="/agenda" />}>
+          Voltar
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit}>

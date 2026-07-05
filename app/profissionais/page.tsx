@@ -23,11 +23,14 @@ export default async function ProfissionaisPage() {
   });
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Profissionais</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm uppercase tracking-[0.24em] text-muted-foreground/70 mb-2">
+            Gestão de profissionais
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight">Profissionais</h1>
+          <p className="text-sm text-muted-foreground mt-2">
             Gerenciar profissionais da clínica
           </p>
         </div>
@@ -37,7 +40,7 @@ export default async function ProfissionaisPage() {
         </Button>
       </div>
 
-      <Card>
+      <Card className="border border-border shadow-sm">
         <CardHeader>
           <CardTitle>Todos os Profissionais</CardTitle>
         </CardHeader>

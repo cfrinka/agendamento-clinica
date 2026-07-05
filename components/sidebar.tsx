@@ -30,13 +30,13 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 border-r border-sidebar-border",
-        collapsed ? "w-16" : "w-60"
+        "flex flex-col h-full bg-sidebar/95 text-sidebar-foreground transition-all duration-300 border-r border-sidebar-border/70 shadow-lg backdrop-blur-xl",
+        collapsed ? "w-16" : "w-64"
       )}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 h-16 shrink-0">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sidebar-primary">
+      <div className="flex items-center gap-3 px-4 h-16 shrink-0 border-b border-sidebar-border/50 bg-sidebar-primary/5">
+        <div className="flex items-center justify-center w-10 h-10 rounded-2xl bg-sidebar-primary/15 shadow-sm">
           <Clock className="w-5 h-5 text-sidebar-primary-foreground" />
         </div>
         {!collapsed && (
@@ -44,17 +44,14 @@ export function Sidebar() {
             <span className="text-sm font-semibold text-sidebar-primary-foreground truncate">
               Agenda Clínica
             </span>
-            <span className="text-xs text-sidebar-foreground/60 truncate">
-              Sistema de Agendamento
+            <span className="text-xs text-sidebar-foreground/70 truncate">
+              Sistema de agendamento
             </span>
           </div>
         )}
       </div>
 
-      <Separator className="bg-sidebar-border/50" />
-
-      {/* Navigation */}
-      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {navigation.map((item) => {
           const isActive =
             item.href === "/"
@@ -65,34 +62,38 @@ export function Sidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                "group flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-200",
                 isActive
-                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  ? "bg-sidebar-primary/15 text-sidebar-primary-foreground shadow-sm"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent/20 hover:text-sidebar-accent-foreground"
               )}
               title={collapsed ? item.name : undefined}
             >
-              <item.icon className="w-5 h-5 flex-shrink-0" />
+              <span
+                className={cn(
+                  "grid h-10 w-10 place-items-center rounded-2xl transition-colors duration-200",
+                  isActive
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                    : "bg-sidebar/20 text-sidebar-foreground group-hover:bg-sidebar-accent/20 group-hover:text-sidebar-accent-foreground"
+                )}
+              >
+                <item.icon className="w-5 h-5" />
+              </span>
               {!collapsed && <span>{item.name}</span>}
             </Link>
           );
         })}
       </nav>
 
-      {/* Collapse button */}
-      <div className="p-2 shrink-0">
+      <div className="px-4 py-3 border-t border-sidebar-border/50">
         <Button
-          variant="ghost"
-          size="icon"
+          variant="secondary"
+          size="sm"
           onClick={() => setCollapsed(!collapsed)}
-          className="w-full text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="w-full rounded-2xl"
           title={collapsed ? "Expandir" : "Recolher"}
         >
-          {collapsed ? (
-            <ChevronRight className="w-5 h-5" />
-          ) : (
-            <ChevronLeft className="w-5 h-5" />
-          )}
+          {collapsed ? "Expandir" : "Recolher"}
         </Button>
       </div>
     </aside>

@@ -47,17 +47,20 @@ export default function NovoPaciente() {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-2xl">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" render={<Link href="/pacientes" />}>
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
+    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Novo Paciente</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Cadastrar novo paciente na clínica
+          <p className="text-sm uppercase tracking-[0.24em] text-muted-foreground/70 mb-2">
+            Novo paciente
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight">Cadastrar Paciente</h1>
+          <p className="text-sm text-muted-foreground mt-2">
+            Preencha os dados do paciente
           </p>
         </div>
+        <Button variant="outline" render={<Link href="/pacientes" />}>
+          Voltar
+        </Button>
       </div>
 
       <form onSubmit={handleSubmit}>
