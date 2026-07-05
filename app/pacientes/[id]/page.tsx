@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Save, Trash2 } from "lucide-react";
+import { Save, Trash2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 interface Paciente {
@@ -102,74 +102,53 @@ export default function EditarPaciente() {
   }
 
   return (
-    <div className="max-w-3xl space-y-6 pb-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
-            Edição de paciente
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Editar Paciente</h1>
-          <p className="text-sm text-muted-foreground/80 mt-1.5">{form.nome}</p>
-        </div>
-        <Button variant="outline" render={<Link href="/pacientes" />} className="rounded-xl">
-          Voltar
+    <div className="max-w-2xl space-y-6">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon-sm" render={<Link href="/pacientes" />}>
+          <ArrowLeft className="w-4 h-4" />
         </Button>
+        <div>
+          <h1 className="text-lg font-semibold tracking-tight">Editar Paciente</h1>
+          <p className="text-sm text-muted-foreground/70">{form.nome}</p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Card className="border border-border/60 shadow-sm rounded-2xl">
-          <CardHeader className="px-6 pt-6 pb-4">
-            <CardTitle className="text-base font-semibold">Dados do Paciente</CardTitle>
+        <Card className="border-border/70">
+          <CardHeader className="px-5 pt-5 pb-0">
+            <CardTitle className="text-sm font-semibold">Dados do Paciente</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-5 px-6 pb-6">
-            <div className="space-y-2">
-              <Label htmlFor="nome">Nome completo</Label>
-              <Input
-                id="nome"
-                required
-                value={form.nome}
-                onChange={(e) => setForm({ ...form, nome: e.target.value })}
-              />
+          <CardContent className="px-5 pt-5 pb-5 space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="nome" className="text-xs">Nome completo</Label>
+              <Input id="nome" required value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })} />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="email" className="text-xs">E-mail</Label>
+                <Input id="email" type="email" value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="telefone">Telefone</Label>
-                <Input
-                  id="telefone"
-                  type="tel"
-                  value={form.telefone}
-                  onChange={(e) => setForm({ ...form, telefone: e.target.value })}
-                />
+              <div className="space-y-1.5">
+                <Label htmlFor="telefone" className="text-xs">Telefone</Label>
+                <Input id="telefone" type="tel" value={form.telefone}
+                  onChange={(e) => setForm({ ...form, telefone: e.target.value })} />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="dataNascimento">Data de nascimento</Label>
-                <Input
-                  id="dataNascimento"
-                  type="date"
-                  value={form.dataNascimento}
-                  onChange={(e) => setForm({ ...form, dataNascimento: e.target.value })}
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="dataNascimento" className="text-xs">Data de nascimento</Label>
+                <Input id="dataNascimento" type="date" value={form.dataNascimento}
+                  onChange={(e) => setForm({ ...form, dataNascimento: e.target.value })} />
               </div>
-              <div className="space-y-2">
-                <Label>Gênero</Label>
-                <Select
-                  value={form.genero}
-                  onValueChange={(v) => setForm({ ...form, genero: v ?? "" })}
-                >
-                  <SelectTrigger className="w-full">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Gênero</Label>
+                <Select value={form.genero}
+                  onValueChange={(v) => setForm({ ...form, genero: v ?? "" })}>
+                  <SelectTrigger>
                     <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -181,42 +160,28 @@ export default function EditarPaciente() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="endereco">Endereço</Label>
-              <Input
-                id="endereco"
-                value={form.endereco}
-                onChange={(e) => setForm({ ...form, endereco: e.target.value })}
-              />
+            <div className="space-y-1.5">
+              <Label htmlFor="endereco" className="text-xs">Endereço</Label>
+              <Input id="endereco" value={form.endereco}
+                onChange={(e) => setForm({ ...form, endereco: e.target.value })} />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="observacoes">Observações</Label>
-              <Textarea
-                id="observacoes"
-                value={form.observacoes}
+            <div className="space-y-1.5">
+              <Label htmlFor="observacoes" className="text-xs">Observações</Label>
+              <Textarea id="observacoes" value={form.observacoes}
                 onChange={(e) => setForm({ ...form, observacoes: e.target.value })}
-              />
+                className="resize-none" rows={3} />
             </div>
           </CardContent>
-          <div className="border-t border-border/50" />
-          <div className="flex items-center justify-between px-6 py-4">
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              onClick={handleDelete}
-              disabled={deleting}
-              className="rounded-xl"
-            >
+          <div className="flex items-center justify-between px-5 py-4 border-t border-border/50">
+            <Button type="button" variant="destructive" size="sm"
+              onClick={handleDelete} disabled={deleting}>
               <Trash2 className="w-4 h-4" />
               {deleting ? "Excluindo..." : "Excluir"}
             </Button>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" render={<Link href="/pacientes" />} className="rounded-xl">
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={loading} className="shadow-sm shadow-primary/15 rounded-xl">
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" render={<Link href="/pacientes" />}>Cancelar</Button>
+              <Button type="submit" size="sm" disabled={loading}>
                 <Save className="w-4 h-4" />
                 {loading ? "Salvando..." : "Salvar"}
               </Button>

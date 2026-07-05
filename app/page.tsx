@@ -13,13 +13,9 @@ import {
   Users,
   Clock,
   Plus,
-  ArrowRight,
-  TrendingUp,
-  Activity,
-  UserCheck,
 } from "lucide-react";
 import Link from "next/link";
-import { cn, formatarData, statusAgendamento } from "@/lib/utils";
+import { formatarData, statusAgendamento } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -48,11 +44,35 @@ async function getDashboardData() {
   return { totalPacientes, totalProfissionais, agendamentosHoje };
 }
 
-function GradientCard({ children }: { children: React.ReactNode }) {
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  sub,
+  color,
+}: {
+  icon: any;
+  label: string;
+  value: string | number;
+  sub?: string;
+  color: string;
+}) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all duration-300 hover:shadow-md hover:border-border/80 group">
-      {children}
-    </div>
+    <Card className="border-border/70">
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div
+            className="flex h-9 w-9 items-center justify-center rounded-lg"
+            style={{ backgroundColor: color + "15", color: color }}
+          >
+            <Icon className="w-4 h-4" />
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground/70 mb-0.5">{label}</p>
+        <p className="text-2xl font-bold tracking-tight">{value}</p>
+        {sub && <p className="text-xs text-muted-foreground/50 mt-1">{sub}</p>}
+      </CardContent>
+    </Card>
   );
 }
 
@@ -61,253 +81,167 @@ export default async function Dashboard() {
     await getDashboardData();
 
   const statusCounts = agendamentosHoje.reduce(
-    (acc, agendamento) => {
-      acc[agendamento.status] = (acc[agendamento.status] ?? 0) + 1;
+    (acc, ag) => {
+      acc[ag.status] = (acc[ag.status] ?? 0) + 1;
       return acc;
     },
     {} as Record<string, number>
   );
 
-  const statusData = [
-    { key: "confirmado", label: "Confirmados", color: "bg-emerald-500", barColor: "bg-gradient-to-r from-emerald-400 to-emerald-500" },
-    { key: "agendado", label: "Agendados", color: "bg-primary", barColor: "bg-gradient-to-r from-primary/80 to-primary" },
-    { key: "em_andamento", label: "Em andamento", color: "bg-amber-500", barColor: "bg-gradient-to-r from-amber-400 to-amber-500" },
-    { key: "concluido", label: "Concluídos", color: "bg-slate-500", barColor: "bg-gradient-to-r from-slate-400 to-slate-500" },
-    { key: "cancelado", label: "Cancelados", color: "bg-red-500", barColor: "bg-gradient-to-r from-red-400 to-red-500" },
-  ];
+  const statusConfig: Record<string, { label: string; color: string; bar: string }> = {
+    confirmado: { label: "Confirmado", color: "#10b981", bar: "bg-emerald-500" },
+    agendado: { label: "Agendado", color: "#6366f1", bar: "bg-indigo-500" },
+    em_andamento: { label: "Em andamento", color: "#f59e0b", bar: "bg-amber-500" },
+    concluido: { label: "Concluído", color: "#64748b", bar: "bg-slate-500" },
+    cancelado: { label: "Cancelado", color: "#ef4444", bar: "bg-red-500" },
+  };
 
   return (
-    <div className="space-y-8 pb-8">
-      {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
-            <Activity className="w-3.5 h-3.5" />
-            <span>Visão geral da clínica</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground/80 mt-1.5">
-            {formatarData(new Date())}{" "}
-            {agendamentosHoje.length > 0 && (
-              <span className="inline-flex items-center gap-1.5 ml-2 px-2.5 py-0.5 rounded-full bg-primary/8 text-primary text-xs font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                {agendamentosHoje.length} consulta{agendamentosHoje.length !== 1 ? "s" : ""} hoje
-              </span>
-            )}
-          </p>
-        </div>
-        <Button render={<Link href="/agenda/novo" />} className="shadow-sm shadow-primary/15">
-          <Plus className="w-4 h-4" />
-          Novo Agendamento
-        </Button>
-      </div>
-
-      {/* Premium Stats Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <GradientCard>
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 text-primary ring-1 ring-primary/10">
-                <CalendarDays className="w-5 h-5" />
-              </div>
-              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/40">Hoje</span>
-            </div>
-            <p className="text-xs text-muted-foreground/70 mb-1">Consultas</p>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-bold tracking-tight text-foreground">{agendamentosHoje.length}</span>
-              <span className="text-sm text-muted-foreground/50">agendadas</span>
-            </div>
-          </CardContent>
-        </GradientCard>
-
-        <GradientCard>
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-emerald-50 text-emerald-600 ring-1 ring-emerald-200/50">
-                <Users className="w-5 h-5" />
-              </div>
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
-            </div>
-            <p className="text-xs text-muted-foreground/70 mb-1">Total de Pacientes</p>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-bold tracking-tight text-foreground">{totalPacientes}</span>
-              <span className="text-sm text-muted-foreground/50">cadastrados</span>
-            </div>
-          </CardContent>
-        </GradientCard>
-
-        <GradientCard>
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 text-purple-600 ring-1 ring-purple-200/50">
-                <Stethoscope className="w-5 h-5" />
-              </div>
-              <UserCheck className="w-4 h-4 text-purple-400" />
-            </div>
-            <p className="text-xs text-muted-foreground/70 mb-1">Profissionais</p>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-bold tracking-tight text-foreground">{totalProfissionais}</span>
-              <span className="text-sm text-muted-foreground/50">ativos</span>
-            </div>
-          </CardContent>
-        </GradientCard>
-
-        <GradientCard>
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 text-amber-700 ring-1 ring-amber-200/50">
-                <Clock className="w-5 h-5" />
-              </div>
-              <ArrowRight className="w-4 h-4 text-amber-400" />
-            </div>
-            <p className="text-xs text-muted-foreground/70 mb-1">Próxima Consulta</p>
-            {agendamentosHoje.length > 0 ? (
-              <div>
-                <span className="text-3xl font-bold tracking-tight text-foreground">{agendamentosHoje[0].horaInicio}</span>
-                <p className="text-xs text-muted-foreground/70 mt-1 truncate">{agendamentosHoje[0].paciente.nome}</p>
-              </div>
-            ) : (
-              <div>
-                <span className="text-2xl font-bold tracking-tight text-muted-foreground/50">---</span>
-                <p className="text-xs text-muted-foreground/50 mt-1">Nenhuma consulta agendada</p>
-              </div>
-            )}
-          </CardContent>
-        </GradientCard>
+    <div className="space-y-8">
+      {/* Stats grid */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          icon={CalendarDays}
+          label="Consultas hoje"
+          value={agendamentosHoje.length}
+          sub="Agendadas para hoje"
+          color="#6366f1"
+        />
+        <StatCard
+          icon={Users}
+          label="Total de pacientes"
+          value={totalPacientes}
+          sub="Cadastrados na clínica"
+          color="#10b981"
+        />
+        <StatCard
+          icon={Stethoscope}
+          label="Profissionais"
+          value={totalProfissionais}
+          sub="Ativos na clínica"
+          color="#8b5cf6"
+        />
+        <StatCard
+          icon={Clock}
+          label="Próxima consulta"
+          value={agendamentosHoje.length > 0 ? agendamentosHoje[0].horaInicio : "---"}
+          sub={agendamentosHoje.length > 0 ? agendamentosHoje[0].paciente.nome : "Nenhuma hoje"}
+          color="#f59e0b"
+        />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Status distribution */}
-        <Card className="lg:col-span-2 border border-border/60 shadow-sm">
-          <CardHeader className="px-6 pt-6 pb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary/60" />
-              <CardTitle className="text-base font-semibold">Distribuição de status</CardTitle>
-            </div>
+        <Card className="lg:col-span-2 border-border/70">
+          <CardHeader className="px-5 pt-5 pb-3">
+            <CardTitle className="text-sm font-semibold">Status das consultas</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4 px-6 pb-6">
-            {statusData.map((status) => {
-              const count = statusCounts[status.key] ?? 0;
-              const percentage = agendamentosHoje.length
+          <CardContent className="px-5 pb-5 space-y-3">
+            {Object.entries(statusConfig).map(([key, cfg]) => {
+              const count = statusCounts[key] ?? 0;
+              const pct = agendamentosHoje.length
                 ? Math.round((count / agendamentosHoje.length) * 100)
                 : 0;
-
               return (
-                <div key={status.key} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className={`w-2 h-2 rounded-full ${status.color}`} />
-                      <span className="text-sm text-muted-foreground">{status.label}</span>
+                <div key={key} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: cfg.color }} />
+                      <span className="text-muted-foreground">{cfg.label}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-foreground tabular-nums">{count}</span>
-                      <span className="text-xs text-muted-foreground/50 w-8 text-right tabular-nums">{percentage}%</span>
-                    </div>
+                    <span className="font-medium text-foreground tabular-nums">
+                      {count}
+                      <span className="text-muted-foreground/50 ml-1">({pct}%)</span>
+                    </span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-muted/70">
+                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                     <div
-                      className={`${status.barColor} h-full rounded-full transition-all duration-500`}
-                      style={{ width: `${percentage}%` }}
+                      className={`h-full rounded-full transition-all ${cfg.bar}`}
+                      style={{ width: `${pct}%` }}
                     />
                   </div>
                 </div>
               );
             })}
             {agendamentosHoje.length === 0 && (
-              <p className="text-sm text-muted-foreground/60 text-center py-4">Nenhum agendamento para hoje</p>
+              <p className="text-xs text-muted-foreground/50 text-center py-3">
+                Nenhum agendamento hoje
+              </p>
             )}
           </CardContent>
         </Card>
 
-        {/* Today's appointments */}
-        <Card className="lg:col-span-3 border border-border/60 shadow-sm">
-          <CardHeader className="px-6 pt-6 pb-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <CardTitle className="text-base font-semibold">Agenda de Hoje</CardTitle>
-              </div>
-              {agendamentosHoje.length > 0 && (
-                <span className="text-xs text-muted-foreground/50">
-                  {agendamentosHoje.length} consulta{agendamentosHoje.length !== 1 ? "s" : ""}
-                </span>
-              )}
-            </div>
+        {/* Today's agenda */}
+        <Card className="lg:col-span-3 border-border/70">
+          <CardHeader className="px-5 pt-5 pb-3 flex-row items-center justify-between">
+            <CardTitle className="text-sm font-semibold">Agenda de hoje</CardTitle>
+            {agendamentosHoje.length > 0 && (
+              <span className="text-xs text-muted-foreground/50 tabular-nums">
+                {agendamentosHoje.length} no total
+              </span>
+            )}
           </CardHeader>
           <CardContent className="px-0 pb-0">
             {agendamentosHoje.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-                <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-5">
-                  <CalendarDays className="w-7 h-7 text-muted-foreground/30" />
+              <div className="flex flex-col items-center justify-center py-16 text-center px-5">
+                <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center mb-4">
+                  <CalendarDays className="w-5 h-5 text-muted-foreground/40" />
                 </div>
-                <p className="text-base font-medium text-muted-foreground">
+                <p className="text-sm font-medium text-muted-foreground">
                   Nenhuma consulta hoje
                 </p>
-                <p className="text-sm text-muted-foreground/60 mt-1.5 max-w-xs">
-                  Clique em &ldquo;Novo Agendamento&rdquo; para agendar uma consulta
+                <p className="text-xs text-muted-foreground/50 mt-1">
+                  Clique em &ldquo;Novo Agendamento&rdquo; para agendar
                 </p>
               </div>
             ) : (
               <div className="divide-y divide-border/50">
-                {agendamentosHoje.map((agendamento, index) => {
-                  const status = statusAgendamento(agendamento.status);
+                {agendamentosHoje.map((ag, i) => {
+                  const st = statusAgendamento(ag.status);
                   return (
                     <div
-                      key={agendamento.id}
-                      className="flex items-start gap-4 px-6 py-4 transition-all duration-200 hover:bg-muted/30 group"
+                      key={ag.id}
+                      className="flex items-start gap-3 px-5 py-3.5 transition-colors hover:bg-muted/30"
                     >
-                      {/* Time column */}
-                      <div className="flex flex-col items-center gap-1 pt-1">
-                        <span className="text-sm font-semibold text-foreground tabular-nums leading-none">
-                          {agendamento.horaInicio}
+                      {/* Time */}
+                      <div className="flex flex-col items-center gap-0.5 pt-0.5 min-w-[48px]">
+                        <span className="text-sm font-semibold tabular-nums leading-none text-foreground">
+                          {ag.horaInicio}
                         </span>
                         <span className="text-[10px] text-muted-foreground/40 leading-none">
-                          {agendamento.horaFim}
+                          {ag.horaFim}
                         </span>
-                        {index < agendamentosHoje.length - 1 && (
-                          <div className="w-px flex-1 min-h-[8px] bg-border/40 mt-1" />
+                        {i < agendamentosHoje.length - 1 && (
+                          <div className="w-px flex-1 bg-border/30 mt-1.5" />
                         )}
                       </div>
 
                       {/* Timeline dot */}
-                      <div className="relative flex flex-col items-center pt-2">
+                      <div className="relative pt-2">
                         <div
-                          className="w-2.5 h-2.5 rounded-full ring-4 ring-background"
-                          style={{ backgroundColor: agendamento.profissional.cor }}
+                          className="w-2 h-2 rounded-full ring-[3px] ring-background"
+                          style={{ backgroundColor: ag.profissional.cor }}
                         />
                       </div>
 
                       {/* Content */}
-                      <div className="flex-1 min-w-0 pb-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-semibold text-foreground text-sm">
-                            {agendamento.paciente.nome}
+                      <div className="flex-1 min-w-0 pb-0.5">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-sm font-medium text-foreground">
+                            {ag.paciente.nome}
                           </span>
                           <Badge
-                            className={cn(
-                              "text-[10px] h-5 px-2 font-medium",
-                              status.color === "bg-blue-100 text-blue-800"
-                                ? "bg-primary/8 text-primary hover:bg-primary/12"
-                                : status.color === "bg-green-100 text-green-800"
-                                  ? "bg-emerald-100/80 text-emerald-700 hover:bg-emerald-100"
-                                  : status.color === "bg-yellow-100 text-yellow-800"
-                                    ? "bg-amber-100/80 text-amber-700 hover:bg-amber-100"
-                                    : status.color === "bg-gray-100 text-gray-800"
-                                      ? "bg-muted/70 text-muted-foreground hover:bg-muted"
-                                      : "bg-red-100/80 text-red-700 hover:bg-red-100"
-                            )}
+                            variant="outline"
+                            className="text-[10px] h-5 px-1.5 font-normal border-border/50 text-muted-foreground"
                           >
-                            {status.label}
+                            {st.label}
                           </Badge>
                         </div>
-                        <div className="mt-1.5 flex items-center gap-3 text-xs text-muted-foreground/70">
-                          <span className="flex items-center gap-1.5">
-                            <Stethoscope className="w-3.5 h-3.5" />
-                            Dr(a). {agendamento.profissional.nome}
-                          </span>
-                          <span className="text-muted-foreground/30">·</span>
-                          <span>{agendamento.profissional.especialidade}</span>
-                        </div>
+                        <p className="text-xs text-muted-foreground/60 mt-0.5">
+                          Dr(a). {ag.profissional.nome}
+                          <span className="mx-1.5 text-muted-foreground/30">·</span>
+                          {ag.profissional.especialidade}
+                        </p>
                       </div>
                     </div>
                   );

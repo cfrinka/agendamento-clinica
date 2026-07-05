@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Save, Plus } from "lucide-react";
+import { Save, Plus, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 interface Profissional {
@@ -89,35 +89,30 @@ export default function NovoAgendamento() {
   }
 
   return (
-    <div className="max-w-3xl space-y-6 pb-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
-            Novo agendamento
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Agendar Consulta</h1>
-          <p className="text-sm text-muted-foreground/80 mt-1.5">
-            Preencha as informações da nova consulta
-          </p>
-        </div>
-        <Button variant="outline" render={<Link href="/agenda" />} className="rounded-xl">
-          Voltar
+    <div className="max-w-2xl space-y-6">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon-sm" render={<Link href="/agenda" />}>
+          <ArrowLeft className="w-4 h-4" />
         </Button>
+        <div>
+          <h1 className="text-lg font-semibold tracking-tight">Agendar Consulta</h1>
+          <p className="text-sm text-muted-foreground/70">Preencha os dados da consulta</p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Card className="border border-border/60 shadow-sm rounded-2xl">
-          <CardHeader className="px-6 pt-6 pb-4">
-            <CardTitle className="text-base font-semibold">Detalhes da Consulta</CardTitle>
+        <Card className="border-border/70">
+          <CardHeader className="px-5 pt-5 pb-0">
+            <CardTitle className="text-sm font-semibold">Detalhes</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-5 px-6 pb-6">
-            <div className="space-y-2">
-              <Label>Profissional</Label>
+          <CardContent className="px-5 pt-5 pb-5 space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Profissional</Label>
               <Select
                 value={form.profissionalId}
                 onValueChange={(v) => setForm({ ...form, profissionalId: v ?? "" })}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger>
                   <SelectValue placeholder="Selecione..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -130,13 +125,13 @@ export default function NovoAgendamento() {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label>Paciente</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Paciente</Label>
               <Select
                 value={form.pacienteId}
                 onValueChange={(v) => setForm({ ...form, pacienteId: v ?? "" })}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger>
                   <SelectValue placeholder="Selecione..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -147,31 +142,22 @@ export default function NovoAgendamento() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button variant="link" size="sm" className="h-auto p-0 mt-1" render={<Link href="/pacientes/novo" />}>
+              <Button variant="link" size="sm" className="h-auto p-0 mt-0.5 text-xs" render={<Link href="/pacientes/novo" />}>
                 <Plus className="w-3 h-3" />
                 Cadastrar novo paciente
               </Button>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="data">Data</Label>
-              <Input
-                id="data"
-                type="date"
-                required
-                value={form.data}
-                onChange={(e) => setForm({ ...form, data: e.target.value })}
-              />
+            <div className="space-y-1.5">
+              <Label htmlFor="data" className="text-xs">Data</Label>
+              <Input id="data" type="date" required value={form.data}
+                onChange={(e) => setForm({ ...form, data: e.target.value })} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="horaInicio">Hora início</Label>
-                <Input
-                  id="horaInicio"
-                  type="time"
-                  required
-                  value={form.horaInicio}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="horaInicio" className="text-xs">Início</Label>
+                <Input id="horaInicio" type="time" required value={form.horaInicio}
                   onChange={(e) => {
                     const h = e.target.value;
                     setForm((prev) => ({
@@ -181,56 +167,42 @@ export default function NovoAgendamento() {
                         ? `${String(Number(h.split(":")[0]) + 1).padStart(2, "0")}:${h.split(":")[1]}`
                         : prev.horaFim,
                     }));
-                  }}
-                />
+                  }} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="horaFim">Hora fim</Label>
-                <Input
-                  id="horaFim"
-                  type="time"
-                  required
-                  value={form.horaFim}
-                  onChange={(e) => setForm({ ...form, horaFim: e.target.value })}
-                />
+              <div className="space-y-1.5">
+                <Label htmlFor="horaFim" className="text-xs">Fim</Label>
+                <Input id="horaFim" type="time" required value={form.horaFim}
+                  onChange={(e) => setForm({ ...form, horaFim: e.target.value })} />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Select
-                value={form.status}
-                onValueChange={(v) => setForm({ ...form, status: v ?? "agendado" })}
-              >
-                <SelectTrigger className="w-full">
+            <div className="space-y-1.5">
+              <Label className="text-xs">Status</Label>
+              <Select value={form.status}
+                onValueChange={(v) => setForm({ ...form, status: v ?? "agendado" })}>
+                <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {statusOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="observacoes">Observações</Label>
-              <Textarea
-                id="observacoes"
-                value={form.observacoes}
+            <div className="space-y-1.5">
+              <Label htmlFor="observacoes" className="text-xs">Observações</Label>
+              <Textarea id="observacoes" value={form.observacoes}
                 onChange={(e) => setForm({ ...form, observacoes: e.target.value })}
-                placeholder="Observações sobre o agendamento..."
-              />
+                placeholder="Observações..." className="resize-none" rows={3} />
             </div>
           </CardContent>
-          <div className="border-t border-border/50" />
-          <div className="flex items-center justify-end gap-3 px-6 py-4">
-            <Button variant="outline" render={<Link href="/agenda" />} className="rounded-xl">
+          <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-border/50">
+            <Button variant="outline" size="sm" render={<Link href="/agenda" />}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading} className="shadow-sm shadow-primary/15 rounded-xl">
+            <Button type="submit" size="sm" disabled={loading}>
               <Save className="w-4 h-4" />
               {loading ? "Salvando..." : "Agendar"}
             </Button>

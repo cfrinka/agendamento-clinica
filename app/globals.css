@@ -7,11 +7,6 @@
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-blue-soft: #dbeafe;
-  --color-green-clinic: #10b981;
-  --color-amber-clinic: #d97706;
-  --color-red-clinic: #dc2626;
-  --color-purple-soft: #8b5cf6;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -46,35 +41,51 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-
-  --animate-shimmer: shimmer 3s ease-in-out infinite;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-fade-in: fadeIn 0.5s ease-out;
-  --animate-slide-up: slideUp 0.4s ease-out;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
 }
 
-@keyframes shimmer {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-6px); }
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+:root {
+  --radius: 0.5rem;
+
+  /* Clean medical palette */
+  --background: oklch(0.97 0.003 240);
+  --foreground: oklch(0.12 0.015 250);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.12 0.015 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.12 0.015 250);
+  --primary: oklch(0.45 0.18 265);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.94 0.008 250);
+  --secondary-foreground: oklch(0.25 0.02 260);
+  --muted: oklch(0.955 0.005 250);
+  --muted-foreground: oklch(0.55 0.015 260);
+  --accent: oklch(0.94 0.008 250);
+  --accent-foreground: oklch(0.2 0.02 260);
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.91 0.005 250);
+  --input: oklch(0.91 0.005 250);
+  --ring: oklch(0.45 0.18 265);
+  --chart-1: oklch(0.45 0.18 265);
+  --chart-2: oklch(0.58 0.16 165);
+  --chart-3: oklch(0.65 0.14 85);
+  --chart-4: oklch(0.48 0.16 290);
+  --chart-5: oklch(0.55 0.18 20);
+
+  /* Sidebar - Clean dark */
+  --sidebar: oklch(0.14 0.01 260);
+  --sidebar-foreground: oklch(0.75 0.01 265);
+  --sidebar-primary: oklch(0.45 0.18 265);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.22 0.01 260);
+  --sidebar-accent-foreground: oklch(0.95 0 0);
+  --sidebar-border: oklch(0.22 0.01 260);
+  --sidebar-ring: oklch(0.45 0.18 265);
 }
 
 * {
@@ -90,9 +101,7 @@ body {
   min-height: 100vh;
   background-color: var(--background);
   background-image:
-    radial-gradient(ellipse 80% 60% at 0% 0%, rgba(59, 130, 246, 0.06), transparent 70%),
-    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(16, 185, 129, 0.05), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(139, 92, 246, 0.03), transparent 60%);
+    radial-gradient(ellipse 70% 50% at 0% 0%, oklch(0.45 0.18 265 / 0.03), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -100,97 +109,22 @@ main {
   min-height: 100vh;
 }
 
-/* Premium Scrollbar styling */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: oklch(0.85 0.01 260);
-  border-radius: 99px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.7 0.02 260);
-}
+/* Minimal scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: oklch(0.85 0.005 260); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: oklch(0.65 0.01 260); }
 
-/* Selection styling */
-::selection {
-  background: oklch(0.55 0.2 265 / 0.2);
-  color: inherit;
-}
-
-:root {
-  --radius: 0.625rem;
-
-  /* Light theme - Premium Medical Blue */
-  --background: oklch(0.975 0.005 265);
-  --foreground: oklch(0.13 0.015 260);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.13 0.015 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.13 0.015 260);
-  --primary: oklch(0.52 0.2 268);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.93 0.025 268);
-  --secondary-foreground: oklch(0.3 0.04 268);
-  --muted: oklch(0.955 0.01 265);
-  --muted-foreground: oklch(0.52 0.025 265);
-  --accent: oklch(0.93 0.025 268);
-  --accent-foreground: oklch(0.2 0.04 268);
-  --destructive: oklch(0.55 0.24 25);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.89 0.01 268);
-  --input: oklch(0.89 0.01 268);
-  --ring: oklch(0.52 0.2 268);
-  --chart-1: oklch(0.52 0.2 268);
-  --chart-2: oklch(0.6 0.18 165);
-  --chart-3: oklch(0.7 0.15 85);
-  --chart-4: oklch(0.5 0.18 295);
-  --chart-5: oklch(0.58 0.2 20);
-
-  /* Sidebar - Deep premium dark */
-  --sidebar: oklch(0.17 0.015 265);
-  --sidebar-foreground: oklch(0.78 0.015 268);
-  --sidebar-primary: oklch(0.52 0.2 268);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.26 0.015 265);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(0.26 0.015 265);
-  --sidebar-ring: oklch(0.52 0.2 268);
-}
+/* Subtle selection */
+::selection { background: oklch(0.45 0.18 265 / 0.15); color: inherit; }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
+  * { @apply border-border outline-ring/50; }
   body {
     @apply bg-background text-foreground;
     color-scheme: light;
-    letter-spacing: 0.012em;
     line-height: 1.6;
   }
-  html {
-    @apply font-sans;
-    scroll-behavior: smooth;
-  }
-  input,
-  textarea,
-  select,
-  button {
-    font: inherit;
-  }
-
-  /* Subtle card entrance animation */
-  .card-enter {
-    animation: slideUp 0.4s ease-out both;
-  }
-  .card-enter:nth-child(1) { animation-delay: 0ms; }
-  .card-enter:nth-child(2) { animation-delay: 80ms; }
-  .card-enter:nth-child(3) { animation-delay: 160ms; }
-  .card-enter:nth-child(4) { animation-delay: 240ms; }
-  .card-enter:nth-child(5) { animation-delay: 320ms; }
-  .card-enter:nth-child(6) { animation-delay: 400ms; }
+  html { @apply font-sans; scroll-behavior: smooth; }
+  input, textarea, select, button { font: inherit; }
 }

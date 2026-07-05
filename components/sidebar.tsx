@@ -13,7 +13,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -66,28 +65,25 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col h-full bg-sidebar text-sidebar-foreground transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1)] border-r border-sidebar-border shadow-2xl",
-        collapsed ? "w-[68px]" : "w-64"
+        "flex flex-col h-full bg-sidebar text-sidebar-foreground select-none",
+        "transition-all duration-300 ease-out border-r border-sidebar-border",
+        collapsed ? "w-[60px]" : "w-56"
       )}
     >
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 h-[72px] shrink-0 border-b border-sidebar-border/60">
-        <div className="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-sidebar-primary to-sidebar-primary/70 shadow-lg shadow-sidebar-primary/20">
-          <Clock className="w-5 h-5 text-white" />
+      {/* Brand header */}
+      <div className="flex items-center gap-2.5 px-3.5 h-14 shrink-0 border-b border-sidebar-border/50">
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sidebar-primary shadow-sm">
+          <Clock className="w-[18px] h-[18px] text-white" />
         </div>
         {!collapsed && (
-          <div className="flex flex-col min-w-0">
-            <span className="text-sm font-semibold text-sidebar-primary-foreground truncate tracking-tight">
-              Agenda Clínica
-            </span>
-            <span className="text-[11px] text-sidebar-foreground/50 truncate tracking-wide">
-              Sistema de agendamento
-            </span>
-          </div>
+          <span className="text-[13px] font-semibold text-white tracking-tight truncate">
+            Agenda Clínica
+          </span>
         )}
       </div>
 
-      <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+      {/* Navigation */}
+      <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-y-auto">
         {navigation.map((item) => {
           const isActive =
             item.href === "/"
@@ -98,91 +94,63 @@ export function Sidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "group relative flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
+                "group flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium transition-all duration-150",
                 isActive
-                  ? "text-sidebar-primary-foreground"
-                  : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/40"
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
               )}
               title={collapsed ? item.name : undefined}
             >
-              {isActive && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 rounded-full bg-sidebar-primary shadow-lg shadow-sidebar-primary/40" />
-              )}
-              <span
-                className={cn(
-                  "grid h-9 w-9 shrink-0 place-items-center rounded-xl transition-all duration-200",
-                  isActive
-                    ? "bg-gradient-to-br from-sidebar-primary to-sidebar-primary/80 text-white shadow-md shadow-sidebar-primary/30"
-                    : "bg-sidebar-accent/30 text-sidebar-foreground/60 group-hover:bg-sidebar-accent/50 group-hover:text-sidebar-foreground"
-                )}
-              >
-                <item.icon className="w-[18px] h-[18px]" />
+              <span className="grid w-5 h-5 shrink-0 place-items-center">
+                <item.icon className={cn(
+                  "w-[18px] h-[18px] transition-colors",
+                  isActive ? "text-sidebar-primary" : "text-sidebar-foreground/40 group-hover:text-sidebar-foreground/70"
+                )} />
               </span>
-              {!collapsed && <span className="tracking-tight">{item.name}</span>}
+              {!collapsed && <span>{item.name}</span>}
             </Link>
           );
         })}
       </nav>
 
-      {!collapsed && stats.pacientes > 0 && (
-        <div className="px-4 pb-4">
-          <div className="mb-3 flex items-center justify-between px-1">
-            <span className="text-[10px] uppercase tracking-[0.18em] text-sidebar-foreground/40 font-semibold">
-              Resumo
-            </span>
-          </div>
-          <div className="grid gap-2">
-            <div className="rounded-xl border border-sidebar-border/40 bg-sidebar-accent/20 p-3.5">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] uppercase tracking-wider text-sidebar-foreground/50">
-                  Pacientes
+      {/* Stats section */}
+      {!collapsed && (
+        <div className="px-3 pb-4">
+          <div className="h-px bg-sidebar-border/40 mb-3" />
+          <div className="grid gap-1.5">
+            {[
+              { label: "Pacientes", value: stats.pacientes, icon: Users },
+              { label: "Profissionais", value: stats.profissionais, icon: Stethoscope },
+              { label: "Consultas hoje", value: stats.agendamentosHoje, icon: Calendar },
+            ].map((item) => (
+              <div
+                key={item.label}
+                className="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-sidebar-accent/30"
+              >
+                <span className="text-[11px] text-sidebar-foreground/50">{item.label}</span>
+                <span className="text-xs font-semibold text-sidebar-foreground tabular-nums">
+                  {item.value}
                 </span>
-                <Users className="w-3.5 h-3.5 text-sidebar-foreground/30" />
               </div>
-              <p className="mt-1.5 text-xl font-bold tracking-tight text-sidebar-primary-foreground">
-                {stats.pacientes}
-              </p>
-            </div>
-            <div className="rounded-xl border border-sidebar-border/40 bg-sidebar-accent/20 p-3.5">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] uppercase tracking-wider text-sidebar-foreground/50">
-                  Profissionais
-                </span>
-                <Stethoscope className="w-3.5 h-3.5 text-sidebar-foreground/30" />
-              </div>
-              <p className="mt-1.5 text-xl font-bold tracking-tight text-sidebar-primary-foreground">
-                {stats.profissionais}
-              </p>
-            </div>
-            <div className="rounded-xl border border-sidebar-border/40 bg-sidebar-accent/20 p-3.5">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] uppercase tracking-wider text-sidebar-foreground/50">
-                  Hoje
-                </span>
-                <Calendar className="w-3.5 h-3.5 text-sidebar-foreground/30" />
-              </div>
-              <p className="mt-1.5 text-xl font-bold tracking-tight text-sidebar-primary-foreground">
-                {stats.agendamentosHoje}
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       )}
 
       {/* Collapse toggle */}
-      <div className="px-3 py-3 border-t border-sidebar-border/40">
+      <div className="px-2 py-2 border-t border-sidebar-border/40">
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center justify-center w-full h-9 rounded-xl text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-sidebar-accent/40 transition-all duration-200 group"
+          className="flex items-center justify-center w-full h-8 rounded-lg text-sidebar-foreground/30 hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-all duration-150"
           title={collapsed ? "Expandir" : "Recolher"}
         >
           {collapsed ? (
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            <ChevronRight className="w-4 h-4" />
           ) : (
-            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-          )}
-          {!collapsed && (
-            <span className="ml-2 text-xs tracking-wide">Recolher</span>
+            <div className="flex items-center gap-2">
+              <ChevronLeft className="w-4 h-4" />
+              <span className="text-xs">Recolher</span>
+            </div>
           )}
         </button>
       </div>

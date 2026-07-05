@@ -1,8 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Plus } from "lucide-react";
-import Link from "next/link";
 import { AgendaCalendar } from "./agenda-calendar";
 import type { Profissional, Agendamento } from "@prisma/client";
 
@@ -31,23 +27,7 @@ export default async function AgendaPage() {
   ]) as [ProfissionalAgenda[], AgendamentoComRelacoes[]];
 
   return (
-    <div className="space-y-6 pb-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
-            Agenda clínica
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Agenda</h1>
-          <p className="text-sm text-muted-foreground/80 mt-1.5">
-            Visualize e gerencie os agendamentos
-          </p>
-        </div>
-        <Button render={<Link href="/agenda/novo" />} className="shadow-sm shadow-primary/15">
-          <Plus className="w-4 h-4" />
-          Novo Agendamento
-        </Button>
-      </div>
-
+    <div className="space-y-5">
       <AgendaCalendar
         profissionais={profissionais.map((p: ProfissionalAgenda) => ({
           id: p.id, nome: p.nome, especialidade: p.especialidade, cor: p.cor,

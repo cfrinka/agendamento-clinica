@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { ChevronLeft, ChevronRight, Clock, Filter } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -45,15 +45,15 @@ const HORARIOS = Array.from({ length: 14 }, (_, i) => {
   return `${hora.toString().padStart(2, "0")}:00`;
 });
 
-const statusBadgeVariant = (status: string) => {
+const statusStyle = (status: string) => {
   const map: Record<string, string> = {
-    agendado: "bg-primary/10 text-primary hover:bg-primary/15",
-    confirmado: "bg-emerald-100 text-emerald-700 hover:bg-emerald-100",
-    em_andamento: "bg-amber-100 text-amber-700 hover:bg-amber-100",
-    concluido: "bg-muted text-muted-foreground hover:bg-muted",
-    cancelado: "bg-red-100 text-red-700 hover:bg-red-100",
+    agendado: "bg-indigo-50 text-indigo-600 border-indigo-200/50",
+    confirmado: "bg-emerald-50 text-emerald-600 border-emerald-200/50",
+    em_andamento: "bg-amber-50 text-amber-600 border-amber-200/50",
+    concluido: "bg-slate-50 text-slate-500 border-slate-200/50",
+    cancelado: "bg-red-50 text-red-500 border-red-200/50",
   };
-  return map[status] ?? "";
+  return map[status] ?? "bg-muted text-muted-foreground border-border/50";
 };
 
 export function AgendaCalendar({ profissionais, agendamentos }: AgendaCalendarProps) {
@@ -85,29 +85,22 @@ export function AgendaCalendar({ profissionais, agendamentos }: AgendaCalendarPr
   const weekLabel = `${format(weekStart, "dd/MM", { locale: ptBR })} - ${format(weekEnd, "dd/MM/yyyy", { locale: ptBR })}`;
 
   return (
-    <Card className="overflow-hidden border border-border/60 shadow-sm rounded-2xl">
-      {/* Premium Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 px-5 py-4 border-b border-border/50 bg-gradient-to-r from-muted/50 to-background">
-        <div className="flex items-center gap-3">
+    <Card className="border-border/70 overflow-hidden">
+      {/* Calendar header */}
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-b border-border/50 bg-muted/30">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => setCurrentDate(new Date())}>
+            Hoje
+          </Button>
           <div className="flex items-center">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentDate(new Date())}
-              className="h-8 px-3 text-xs font-medium rounded-lg"
-            >
-              Hoje
+            <Button variant="ghost" size="icon-sm" onClick={() => setCurrentDate(subWeeks(currentDate, 1))}>
+              <ChevronLeft className="w-4 h-4" />
             </Button>
-            <div className="flex items-center ml-1">
-              <Button variant="ghost" size="icon-sm" onClick={() => setCurrentDate(subWeeks(currentDate, 1))}>
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="icon-sm" onClick={() => setCurrentDate(addWeeks(currentDate, 1))}>
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            </div>
+            <Button variant="ghost" size="icon-sm" onClick={() => setCurrentDate(addWeeks(currentDate, 1))}>
+              <ChevronRight className="w-4 h-4" />
+            </Button>
           </div>
-          <span className="text-sm font-semibold tracking-tight text-foreground">
+          <span className="text-sm font-medium">
             {view === "semana"
               ? weekLabel
               : format(currentDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
@@ -115,169 +108,125 @@ export function AgendaCalendar({ profissionais, agendamentos }: AgendaCalendarPr
         </div>
 
         <div className="flex items-center gap-3">
-          {/* View toggle */}
-          <div className="flex bg-muted/80 rounded-lg p-0.5 ring-1 ring-border/30">
-            <Button
-              variant={view === "semana" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setView("semana")}
-              className="h-7 px-3 text-xs font-medium rounded-md"
-            >
-              Semana
-            </Button>
-            <Button
-              variant={view === "dia" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setView("dia")}
-              className="h-7 px-3 text-xs font-medium rounded-md"
-            >
-              Dia
-            </Button>
+          <div className="flex bg-muted rounded-md p-0.5 border border-border/30">
+            {["semana", "dia"].map((v) => (
+              <Button
+                key={v}
+                variant={view === v ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setView(v as "semana" | "dia")}
+                className="h-7 px-3 text-xs rounded-sm"
+              >
+                {v === "semana" ? "Semana" : "Dia"}
+              </Button>
+            ))}
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <Filter className="w-3.5 h-3.5 text-muted-foreground/50" />
-            <Select
-              value={selectedProfissional === "todos" ? "todos" : String(selectedProfissional)}
-              onValueChange={(v) =>
-                setSelectedProfissional(v === "todos" ? "todos" : Number(v))
-              }
-            >
-              <SelectTrigger className="h-8 w-44 text-xs rounded-lg">
-                <SelectValue placeholder="Todos os profissionais" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="todos">Todos os profissionais</SelectItem>
-                {profissionais.map((p) => (
-                  <SelectItem key={p.id} value={String(p.id)}>
-                    {p.nome}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <Select
+            value={selectedProfissional === "todos" ? "todos" : String(selectedProfissional)}
+            onValueChange={(v) =>
+              setSelectedProfissional(v === "todos" ? "todos" : Number(v))
+            }
+          >
+            <SelectTrigger className="h-8 w-40 text-xs">
+              <SelectValue placeholder="Todos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todos os profissionais</SelectItem>
+              {profissionais.map((p) => (
+                <SelectItem key={p.id} value={String(p.id)}>
+                  {p.nome}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      {/* Mobile schedule list */}
-      <div className="space-y-4 p-4 sm:hidden">
+      {/* Mobile view */}
+      <div className="space-y-3 p-4 sm:hidden">
         {(view === "semana" ? days : [currentDate]).map((dia) => {
-          const agendamentosDoDia = getAgendamentosDoDia(dia);
+          const apps = getAgendamentosDoDia(dia);
           const isToday = isSameDay(dia, new Date());
           return (
-            <div
-              key={dia.toISOString()}
-              className={cn(
-                "rounded-xl border bg-card overflow-hidden transition-all",
-                isToday ? "border-primary/20 ring-1 ring-primary/5" : "border-border/60"
-              )}
-            >
+            <div key={dia.toISOString()} className={cn(
+              "rounded-xl border overflow-hidden",
+              isToday ? "border-indigo-200/50" : "border-border/60"
+            )}>
               <div className={cn(
-                "flex items-center justify-between gap-4 px-4 py-3 border-b",
-                isToday ? "bg-primary/5 border-primary/10" : "bg-muted/30 border-border/40"
+                "flex items-center justify-between px-4 py-2.5 border-b",
+                isToday ? "bg-indigo-50/50 border-indigo-100/50" : "bg-muted/30 border-border/40"
               )}>
                 <div className="flex items-center gap-2">
-                  {isToday && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
-                  <div>
-                    <p className="text-xs font-medium text-muted-foreground/70">
-                      {format(dia, "EEEE", { locale: ptBR })}
-                    </p>
-                    <p className={cn("text-base font-semibold", isToday ? "text-primary" : "text-foreground")}>
-                      {format(dia, "dd 'de' MMMM")}
-                    </p>
-                  </div>
+                  {isToday && <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />}
+                  <span className={cn("text-sm font-medium", isToday ? "text-indigo-700" : "text-foreground")}>
+                    {format(dia, "EEEE, dd 'de' MMMM", { locale: ptBR })}
+                  </span>
                 </div>
-                <div className={cn(
-                  "rounded-lg px-2.5 py-1 text-xs font-medium",
-                  agendamentosDoDia.length > 0
-                    ? "bg-primary/8 text-primary"
-                    : "bg-muted/50 text-muted-foreground/50"
+                <span className={cn(
+                  "text-xs tabular-nums",
+                  apps.length > 0 ? "text-indigo-600 font-medium" : "text-muted-foreground/50"
                 )}>
-                  {agendamentosDoDia.length} consulta{agendamentosDoDia.length !== 1 ? "s" : ""}
-                </div>
+                  {apps.length}
+                </span>
               </div>
               <div className="divide-y divide-border/30">
-                {agendamentosDoDia.length === 0 ? (
-                  <div className="px-4 py-6 text-center">
-                    <p className="text-sm text-muted-foreground/50">Nenhum agendamento neste dia.</p>
-                  </div>
-                ) : (
-                  agendamentosDoDia.map((ag) => (
-                    <div
-                      key={ag.id}
-                      className="px-4 py-3 transition-colors hover:bg-muted/20 active:bg-muted/30"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div
-                          className="w-1 rounded-full shrink-0 mt-1"
-                          style={{
-                            backgroundColor: ag.profissional.cor,
-                            height: '2.5rem',
-                          }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <p className="text-sm font-semibold text-foreground truncate">
-                              {ag.paciente.nome}
-                            </p>
-                            <span className="text-xs text-muted-foreground/60 whitespace-nowrap tabular-nums">
-                              {ag.horaInicio}
-                            </span>
-                          </div>
-                          <p className="text-xs text-muted-foreground/60 mt-0.5">
-                            Dr(a). {ag.profissional.nome}
-                          </p>
-                          <Badge className={cn("mt-1.5 inline-flex text-[10px] h-5 px-2 font-medium", statusBadgeVariant(ag.status))}>
-                            {ag.status === "agendado" ? "Agendado"
-                              : ag.status === "confirmado" ? "Confirmado"
-                              : ag.status === "em_andamento" ? "Em andamento"
-                              : ag.status === "concluido" ? "Concluído"
-                              : "Cancelado"}
-                          </Badge>
-                        </div>
+                {apps.length === 0 ? (
+                  <p className="px-4 py-6 text-xs text-muted-foreground/50 text-center">
+                    Nenhum agendamento
+                  </p>
+                ) : apps.map((ag) => (
+                  <div key={ag.id} className="flex items-start gap-3 px-4 py-3">
+                    <div className="w-0.5 rounded-full shrink-0 mt-0.5" style={{ backgroundColor: ag.profissional.cor, height: "2rem" }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-medium text-foreground truncate">{ag.paciente.nome}</span>
+                        <span className="text-xs text-muted-foreground/60 tabular-nums whitespace-nowrap">{ag.horaInicio}</span>
                       </div>
+                      <p className="text-xs text-muted-foreground/60 mt-0.5">Dr(a). {ag.profissional.nome}</p>
+                      <Badge variant="outline" className={cn("mt-1.5 text-[10px] h-5 px-1.5 font-normal", statusStyle(ag.status))}>
+                        {ag.status === "agendado" ? "Agendado"
+                          : ag.status === "confirmado" ? "Confirmado"
+                          : ag.status === "em_andamento" ? "Em andamento"
+                          : ag.status === "concluido" ? "Concluído"
+                          : "Cancelado"}
+                      </Badge>
                     </div>
-                  ))
-                )}
+                  </div>
+                ))}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Calendar grid */}
+      {/* Desktop calendar grid */}
       <div className="hidden sm:block overflow-x-auto">
         <div
           className="grid"
           style={{
-            gridTemplateColumns: `72px repeat(${view === "semana" ? days.length : 1}, minmax(180px, 1fr))`,
+            gridTemplateColumns: `64px repeat(${view === "semana" ? days.length : 1}, minmax(160px, 1fr))`,
           }}
         >
-          {/* Header row */}
-          <div className="sticky top-0 z-10 bg-muted/30 border-r border-b border-border/40">
-            <div className="h-12 flex items-center justify-center text-[10px] font-semibold text-muted-foreground/50 uppercase tracking-wider">
-              Horário
-            </div>
-          </div>
+          {/* Column headers */}
+          <div className="sticky top-0 z-10 border-r border-b border-border/40 bg-muted/20" />
           {(view === "semana" ? days : [currentDate]).map((dia) => {
             const isToday = isSameDay(dia, new Date());
             return (
               <div
                 key={dia.toISOString()}
                 className={cn(
-                  "sticky top-0 z-10 border-r border-b border-border/40 p-2 text-center",
-                  isToday ? "bg-primary/5" : "bg-muted/20"
+                  "sticky top-0 z-10 border-r border-b border-border/40 py-2.5 text-center",
+                  isToday ? "bg-indigo-50/40" : "bg-muted/10"
                 )}
               >
-                <div className="text-[11px] text-muted-foreground/60 font-medium">
+                <div className="text-[11px] text-muted-foreground/60 font-medium uppercase tracking-wider">
                   {format(dia, "EEE", { locale: ptBR })}
                 </div>
-                <div
-                  className={cn(
-                    "inline-flex items-center justify-center w-8 h-8 rounded-full text-base font-semibold mt-0.5",
-                    isToday ? "bg-primary text-white shadow-sm shadow-primary/30" : "text-foreground"
-                  )}
-                >
+                <div className={cn(
+                  "inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-semibold mt-0.5",
+                  isToday ? "bg-indigo-500 text-white" : "text-foreground"
+                )}>
                   {format(dia, "dd")}
                 </div>
               </div>
@@ -287,66 +236,45 @@ export function AgendaCalendar({ profissionais, agendamentos }: AgendaCalendarPr
           {/* Time slots */}
           {HORARIOS.map((horario) => (
             <>
-              <div
-                key={`h-${horario}`}
-                className="border-r border-b border-border/30 p-1.5 flex items-start justify-center bg-muted/10"
-              >
-                <span className="text-[11px] text-muted-foreground/50 font-medium tabular-nums">
-                  {horario}
-                </span>
+              <div key={`h-${horario}`} className="border-r border-b border-border/30 p-1.5 flex items-start justify-center bg-muted/5">
+                <span className="text-[10px] text-muted-foreground/40 font-medium tabular-nums">{horario}</span>
               </div>
               {(view === "semana" ? days : [currentDate]).map((dia) => {
-                const agendamentosDoDia = getAgendamentosDoDia(dia);
-                const agendamentosNoHorario = agendamentosDoDia.filter(
-                  (a) => a.horaInicio === horario
-                );
+                const apps = getAgendamentosDoDia(dia).filter((a) => a.horaInicio === horario);
                 const isToday = isSameDay(dia, new Date());
-
                 return (
                   <div
                     key={`${dia.toISOString()}-${horario}`}
                     className={cn(
-                      "border-r border-b border-border/30 p-1.5 min-h-[72px] transition-colors",
-                      isToday && "bg-primary/[0.02]"
+                      "border-r border-b border-border/30 p-1 min-h-[60px] transition-colors",
+                      isToday && "bg-indigo-500/[0.02]"
                     )}
                   >
-                    {agendamentosNoHorario.map((ag) => (
+                    {apps.map((ag) => (
                       <div
                         key={ag.id}
-                        className="group relative rounded-lg p-2 mb-1.5 cursor-pointer transition-all duration-150 hover:shadow-sm hover:-translate-y-0.5 active:translate-y-0"
-                        style={{
-                          backgroundColor: ag.profissional.cor + "10",
-                        }}
+                        className="group relative rounded-md px-2 py-1.5 mb-1 cursor-pointer transition-all hover:shadow-sm"
+                        style={{ backgroundColor: ag.profissional.cor + "0d" }}
                       >
-                        {/* Color accent bar */}
-                        <div
-                          className="absolute left-0 top-1 bottom-1 w-[3px] rounded-r-full"
-                          style={{ backgroundColor: ag.profissional.cor }}
-                        />
-                        <div className="pl-2.5">
-                          <div className="text-xs font-semibold truncate leading-tight text-foreground">
+                        <div className="absolute left-0 top-0.5 bottom-0.5 w-0.5 rounded-full" style={{ backgroundColor: ag.profissional.cor }} />
+                        <div className="pl-2">
+                          <div className="text-[11px] font-semibold leading-tight truncate text-foreground">
                             {ag.paciente.nome}
                           </div>
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <Clock className="w-3 h-3 text-muted-foreground/50" />
-                            <span className="text-[10px] text-muted-foreground/60 tabular-nums">
-                              {ag.horaInicio}
-                            </span>
+                          <div className="flex items-center gap-0.5 mt-0.5">
+                            <Clock className="w-2.5 h-2.5 text-muted-foreground/50" />
+                            <span className="text-[9px] text-muted-foreground/50 tabular-nums">{ag.horaInicio}</span>
                           </div>
-                          <div className="mt-1">
-                            <span
-                              className={cn(
-                                "inline-flex text-[9px] leading-none px-1.5 py-0.5 rounded-full font-medium",
-                                statusBadgeVariant(ag.status)
-                              )}
-                            >
-                              {ag.status === "agendado" ? "Agendado"
-                                : ag.status === "confirmado" ? "Confirmado"
-                                : ag.status === "em_andamento" ? "Em andamento"
-                                : ag.status === "concluido" ? "Concluído"
-                                : "Cancelado"}
-                            </span>
-                          </div>
+                          <span className={cn(
+                            "inline-flex mt-0.5 text-[8px] leading-none px-1 py-0.5 rounded-sm font-medium",
+                            statusStyle(ag.status)
+                          )}>
+                            {ag.status === "agendado" ? "Agd"
+                              : ag.status === "confirmado" ? "Conf"
+                              : ag.status === "em_andamento" ? "And"
+                              : ag.status === "concluido" ? "Conc"
+                              : "Canc"}
+                          </span>
                         </div>
                       </div>
                     ))}

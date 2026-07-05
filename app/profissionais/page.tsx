@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Plus, Stethoscope } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -23,37 +24,25 @@ export default async function ProfissionaisPage() {
   });
 
   return (
-    <div className="space-y-6 pb-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
-            Gestão de profissionais
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Profissionais</h1>
-          <p className="text-sm text-muted-foreground/80 mt-1.5">
-            Gerenciar profissionais da clínica
-          </p>
-        </div>
-        <Button render={<Link href="/profissionais/novo" />} className="shadow-sm shadow-primary/15">
-          <Plus className="w-4 h-4" />
-          Novo Profissional
-        </Button>
-      </div>
-
-      <Card className="border border-border/60 shadow-sm rounded-2xl">
-        <CardHeader className="px-6 pt-6 pb-4">
-          <CardTitle className="text-base font-semibold">Todos os Profissionais</CardTitle>
+    <div className="space-y-5">
+      <Card className="border-border/70">
+        <CardHeader className="px-5 pt-5 pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-semibold">Profissionais</CardTitle>
+            <Button size="sm" render={<Link href="/profissionais/novo" />}>
+              <Plus className="w-4 h-4" />
+              Novo
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="px-0 pb-0">
           {profissionais.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <Stethoscope className="w-12 h-12 text-muted-foreground/30 mb-4" />
-              <p className="text-lg font-medium text-muted-foreground">
-                Nenhum profissional cadastrado
-              </p>
-              <p className="text-sm text-muted-foreground/60 mt-1">
-                Clique em &ldquo;Novo Profissional&rdquo; para cadastrar
-              </p>
+            <div className="flex flex-col items-center justify-center py-12 text-center px-5">
+              <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center mb-3">
+                <Stethoscope className="w-5 h-5 text-muted-foreground/40" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground">Nenhum profissional cadastrado</p>
+              <p className="text-xs text-muted-foreground/50 mt-1">Clique em &ldquo;Novo&rdquo; para cadastrar</p>
             </div>
           ) : (
             <Table>
@@ -62,49 +51,45 @@ export default async function ProfissionaisPage() {
                   <TableHead>Profissional</TableHead>
                   <TableHead>Especialidade</TableHead>
                   <TableHead>Contato</TableHead>
-                  <TableHead className="text-center">Consultas</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
+                  <TableHead className="text-center w-20">Consultas</TableHead>
+                  <TableHead className="text-center w-20">Status</TableHead>
+                  <TableHead className="text-right w-20">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {profissionais.map((prof) => (
                   <TableRow key={prof.id}>
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar>
+                      <div className="flex items-center gap-2.5">
+                        <Avatar className="w-7 h-7">
                           <AvatarFallback
-                            className="text-white text-xs font-medium"
+                            className="text-[10px] text-white font-medium"
                             style={{ backgroundColor: prof.cor }}
                           >
                             {prof.nome.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <span className="font-medium">{prof.nome}</span>
+                        <span className="text-sm font-medium">{prof.nome}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="text-sm text-muted-foreground">
                       {prof.especialidade}
                     </TableCell>
-                    <TableCell>
-                      <div className="text-sm">{prof.email}</div>
-                      {prof.telefone && (
-                        <div className="text-xs text-muted-foreground">
-                          {prof.telefone}
-                        </div>
-                      )}
+                    <TableCell className="text-sm text-muted-foreground">
+                      {prof.email}
                     </TableCell>
-                    <TableCell className="text-center text-muted-foreground">
+                    <TableCell className="text-center text-muted-foreground text-sm tabular-nums">
                       {prof._count.agendamentos}
                     </TableCell>
                     <TableCell className="text-center">
                       <Badge
                         variant={prof.ativo ? "default" : "secondary"}
-                        className={
+                        className={cn(
+                          "text-[10px] h-5 px-1.5 font-normal",
                           prof.ativo
-                            ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
+                            ? "bg-emerald-50 text-emerald-600 border-emerald-200/50"
                             : ""
-                        }
+                        )}
                       >
                         {prof.ativo ? "Ativo" : "Inativo"}
                       </Badge>

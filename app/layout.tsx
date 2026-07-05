@@ -29,14 +29,12 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="flex min-h-screen overflow-hidden bg-background text-foreground">
+      <body className="flex min-h-screen overflow-hidden">
         <Sidebar />
         <main className="flex-1 overflow-y-auto">
-          <div className="min-h-screen">
-            <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10 pt-6 pb-12">
-              <Topbar />
-              <div className="mt-2 animate-fade-in">{children}</div>
-            </div>
+          <div className="max-w-7xl mx-auto px-6 py-6 lg:px-8">
+            <Topbar />
+            <div className="mt-5">{children}</div>
           </div>
         </main>
       </body>
