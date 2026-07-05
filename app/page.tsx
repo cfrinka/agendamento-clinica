@@ -42,6 +42,24 @@ export default async function Dashboard() {
   const { totalPacientes, totalProfissionais, agendamentosHoje } =
     await getDashboardData();
 
+  const statusCounts = agendamentosHoje.reduce(
+    (acc, agendamento) => {
+      acc[agendamento.status] = (acc[agendamento.status] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  const statusData = [
+    { key: "confirmado", label: "Confirmados", color: "bg-emerald-500" },
+    { key: "agendado", label: "Agendados", color: "bg-primary" },
+    { key: "em_andamento", label: "Em andamento", color: "bg-amber-500" },
+    { key: "concluido", label: "Concluídos", color: "bg-slate-500" },
+    { key: "cancelado", label: "Cancelados", color: "bg-red-500" },
+  ];
+
+  const totalStatus = agendamentosHoje.length || 1;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
       {/* Header */}
@@ -62,9 +80,9 @@ export default async function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="border border-border shadow-sm">
-          <CardContent className="flex items-center gap-4 p-6">
+          <CardContent className="flex flex-col gap-4 p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <CalendarDays className="w-5 h-5" />
             </div>
@@ -72,11 +90,14 @@ export default async function Dashboard() {
               <p className="text-sm text-muted-foreground">Consultas Hoje</p>
               <p className="text-3xl font-semibold">{agendamentosHoje.length}</p>
             </div>
+            <p className="text-sm text-muted-foreground/70">
+              Total de consultas agendadas para hoje.
+            </p>
           </CardContent>
         </Card>
 
         <Card className="border border-border shadow-sm">
-          <CardContent className="flex items-center gap-4 p-6">
+          <CardContent className="flex flex-col gap-4 p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
               <Users className="w-5 h-5" />
             </div>
@@ -84,11 +105,14 @@ export default async function Dashboard() {
               <p className="text-sm text-muted-foreground">Total de Pacientes</p>
               <p className="text-3xl font-semibold">{totalPacientes}</p>
             </div>
+            <p className="text-sm text-muted-foreground/70">
+              Pacientes cadastrados em sua clínica.
+            </p>
           </CardContent>
         </Card>
 
         <Card className="border border-border shadow-sm">
-          <CardContent className="flex items-center gap-4 p-6">
+          <CardContent className="flex flex-col gap-4 p-6">
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
               <Stethoscope className="w-5 h-5" />
             </div>
@@ -96,9 +120,63 @@ export default async function Dashboard() {
               <p className="text-sm text-muted-foreground">Profissionais</p>
               <p className="text-3xl font-semibold">{totalProfissionais}</p>
             </div>
+            <p className="text-sm text-muted-foreground/70">
+              Profissionais ativos disponíveis para agendamento.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border border-border shadow-sm">
+          <CardContent className="flex flex-col gap-4 p-6">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+              <Clock className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">Próxima Consulta</p>
+              <p className="text-3xl font-semibold">
+                {agendamentosHoje.length > 0
+                  ? `${agendamentosHoje[0].horaInicio}`
+                  : "---"}
+              </p>
+            </div>
+            <p className="text-sm text-muted-foreground/70">
+              {agendamentosHoje.length > 0
+                ? agendamentosHoje[0].paciente.nome
+                : "Nenhuma consulta agendada"}
+            </p>
           </CardContent>
         </Card>
       </div>
+
+      {/* Status distribution */}
+      <Card className="border border-border shadow-sm">
+        <CardHeader className="px-6 py-5">
+          <CardTitle className="text-lg">Distribuição de status</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 px-6 pb-6">
+          {statusData.map((status) => {
+            const count = statusCounts[status.key] ?? 0;
+            const percentage = agendamentosHoje.length
+              ? Math.round((count / agendamentosHoje.length) * 100)
+              : 0;
+
+            return (
+              <div key={status.key} className="space-y-2">
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <span>{status.label}</span>
+                  <span className="font-semibold text-foreground">{count}</span>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className={`${status.color} h-full rounded-full`}
+                    style={{ width: `${percentage}%` }}
+                  />
+                </div>
+              </div>
+            );
+          })}
+        </CardContent>
+      </Card>
 
       {/* Today's appointments */}
       <Card className="border border-border shadow-sm">

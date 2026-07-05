@@ -149,12 +149,78 @@ export function AgendaCalendar({ profissionais, agendamentos }: AgendaCalendarPr
         </div>
       </div>
 
+      {/* Mobile schedule list */}
+      <div className="space-y-4 sm:hidden">
+        {(view === "semana" ? days : [currentDate]).map((dia) => {
+          const agendamentosDoDia = getAgendamentosDoDia(dia);
+          return (
+            <div
+              key={dia.toISOString()}
+              className="rounded-[1.5rem] border border-border bg-card p-4 shadow-sm"
+            >
+              <div className="flex items-center justify-between gap-4 pb-4 border-b border-border/70">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground/80">
+                    {format(dia, "EEE", { locale: ptBR })}
+                  </p>
+                  <p className="text-lg font-semibold text-foreground">
+                    {format(dia, "dd 'de' MMMM")}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
+                  {agendamentosDoDia.length} consultas
+                </div>
+              </div>
+              <div className="space-y-3 pt-4">
+                {agendamentosDoDia.length === 0 ? (
+                  <div className="rounded-2xl border border-border/80 bg-muted/60 p-4 text-center text-sm text-muted-foreground">
+                    Nenhum agendamento neste dia.
+                  </div>
+                ) : (
+                  agendamentosDoDia.map((ag) => (
+                    <div
+                      key={ag.id}
+                      className="rounded-3xl border border-border/70 bg-background p-4 shadow-sm"
+                      style={{
+                        borderLeftColor: ag.profissional.cor,
+                        borderLeftWidth: 4,
+                      }}
+                    >
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-foreground truncate">
+                            {ag.paciente.nome}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Dr(a). {ag.profissional.nome}
+                          </p>
+                        </div>
+                        <div className="rounded-2xl bg-muted px-3 py-1 text-xs text-muted-foreground">
+                          {ag.horaInicio} - {ag.horaFim}
+                        </div>
+                      </div>
+                      <Badge className={cn("mt-3 inline-flex text-[10px] h-6 px-2.5", statusBadgeVariant(ag.status))}>
+                        {ag.status === "agendado" ? "Agendado"
+                          : ag.status === "confirmado" ? "Confirmado"
+                          : ag.status === "em_andamento" ? "Em andamento"
+                          : ag.status === "concluido" ? "Concluído"
+                          : "Cancelado"}
+                      </Badge>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
       {/* Calendar grid */}
-      <div className="overflow-x-auto">
+      <div className="hidden sm:block overflow-x-auto">
         <div
           className="grid min-w-[800px]"
           style={{
-            gridTemplateColumns: `80px repeat(${view === "semana" ? days.length : 1}, 1fr)`,
+            gridTemplateColumns: `80px repeat(${view === "semana" ? days.length : 1}, minmax(200px, 1fr))`,
           }}
         >
           {/* Header row */}
@@ -190,7 +256,7 @@ export function AgendaCalendar({ profissionais, agendamentos }: AgendaCalendarPr
             <>
               <div
                 key={`h-${horario}`}
-                className="border-r border-b px-2 py-3 flex items-start justify-center"
+                className="border-r border-b p-2 flex items-start justify-center"
               >
                 <span className="text-xs text-muted-foreground font-medium">
                   {horario}
@@ -206,32 +272,30 @@ export function AgendaCalendar({ profissionais, agendamentos }: AgendaCalendarPr
                   <div
                     key={`${dia.toISOString()}-${horario}`}
                     className={cn(
-                      "border-r border-b p-1 min-h-[80px]",
+                      "border-r border-b p-2 min-h-[80px]",
                       isSameDay(dia, new Date()) && "bg-blue-50/20"
                     )}
                   >
                     {agendamentosNoHorario.map((ag) => (
                       <div
                         key={ag.id}
-                        className="rounded-md p-1.5 mb-1 cursor-pointer hover:opacity-80 transition-opacity"
+                        className="rounded-2xl p-2 mb-2 cursor-pointer transition-colors hover:bg-muted/60"
                         style={{
-                          backgroundColor: ag.profissional.cor + "18",
+                          backgroundColor: ag.profissional.cor + "12",
                           borderLeft: `3px solid ${ag.profissional.cor}`,
                         }}
                       >
-                        <div className="text-xs font-medium truncate leading-tight">
+                        <div className="text-sm font-semibold truncate leading-tight text-foreground">
                           {ag.paciente.nome}
                         </div>
-                        <div className="flex items-center gap-1 mt-0.5">
-                          <Clock className="w-2.5 h-2.5 text-muted-foreground" />
-                          <span className="text-[10px] text-muted-foreground">
-                            {ag.horaInicio}
-                          </span>
+                        <div className="flex items-center gap-1 mt-1 text-[11px] text-muted-foreground">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{ag.horaInicio}</span>
                         </div>
-                        <Badge className={cn("mt-1 text-[10px] h-4 px-1.5", statusBadgeVariant(ag.status))}>
+                        <Badge className={cn("mt-2 inline-flex text-[10px] h-5 px-2", statusBadgeVariant(ag.status))}>
                           {ag.status === "agendado" ? "Agendado"
                             : ag.status === "confirmado" ? "Confirmado"
-                            : ag.status === "em_andamento" ? "Andamento"
+                            : ag.status === "em_andamento" ? "Em andamento"
                             : ag.status === "concluido" ? "Concluído"
                             : "Cancelado"}
                         </Badge>

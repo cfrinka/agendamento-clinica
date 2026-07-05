@@ -12,7 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -26,6 +26,43 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [stats, setStats] = useState({ pacientes: 0, profissionais: 0, agendamentosHoje: 0 });
+
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const [pacientesRes, profissionaisRes, agendamentosRes] = await Promise.all([
+          fetch("/api/pacientes"),
+          fetch("/api/profissionais"),
+          fetch("/api/agendamentos"),
+        ]);
+        const [pacientes, profissionais, agendamentos] = await Promise.all([
+          pacientesRes.json(),
+          profissionaisRes.json(),
+          agendamentosRes.json(),
+        ]);
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        const amanha = new Date(hoje);
+        amanha.setDate(amanha.getDate() + 1);
+
+        const agendamentosHoje = agendamentos.filter((ag: any) => {
+          const data = new Date(ag.data);
+          return data >= hoje && data < amanha;
+        }).length;
+
+        setStats({
+          pacientes: pacientes.length,
+          profissionais: profissionais.length,
+          agendamentosHoje,
+        });
+      } catch {
+        // ignore
+      }
+    }
+
+    loadStats();
+  }, []);
 
   return (
     <aside
@@ -84,6 +121,40 @@ export function Sidebar() {
           );
         })}
       </nav>
+
+      {!collapsed && (
+        <div className="px-4 py-4">
+          <div className="mb-3 flex items-center justify-between text-xs uppercase tracking-[0.24em] text-sidebar-foreground/70">
+            <span>Resumo</span>
+          </div>
+          <div className="grid gap-3">
+            <div className="rounded-3xl border border-sidebar-border/50 bg-sidebar/80 p-4">
+              <p className="text-[0.65rem] uppercase tracking-[0.24em] text-sidebar-foreground/70">
+                Pacientes
+              </p>
+              <p className="mt-3 text-2xl font-semibold text-sidebar-primary-foreground">
+                {stats.pacientes}
+              </p>
+            </div>
+            <div className="rounded-3xl border border-sidebar-border/50 bg-sidebar/80 p-4">
+              <p className="text-[0.65rem] uppercase tracking-[0.24em] text-sidebar-foreground/70">
+                Profissionais
+              </p>
+              <p className="mt-3 text-2xl font-semibold text-sidebar-primary-foreground">
+                {stats.profissionais}
+              </p>
+            </div>
+            <div className="rounded-3xl border border-sidebar-border/50 bg-sidebar/80 p-4">
+              <p className="text-[0.65rem] uppercase tracking-[0.24em] text-sidebar-foreground/70">
+                Hoje
+              </p>
+              <p className="mt-3 text-2xl font-semibold text-sidebar-primary-foreground">
+                {stats.agendamentosHoje}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="px-4 py-3 border-t border-sidebar-border/50">
         <Button
