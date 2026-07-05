@@ -1,6 +1,16 @@
 import { prisma } from "@/lib/prisma";
-import { PageHeader } from "@/components/page-header";
-import { Plus, Edit, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Plus, Users } from "lucide-react";
 import Link from "next/link";
 import { formatarData } from "@/lib/utils";
 
@@ -9,99 +19,89 @@ export const dynamic = "force-dynamic";
 export default async function PacientesPage() {
   const pacientes = await prisma.paciente.findMany({
     orderBy: { nome: "asc" },
-    include: {
-      _count: { select: { agendamentos: true } },
-    },
+    include: { _count: { select: { agendamentos: true } } },
   });
 
   return (
-    <div className="pb-8">
-      <PageHeader title="Pacientes" description="Gerenciar pacientes da clínica">
-        <Link
-          href="/pacientes/novo"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
-        >
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Pacientes</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Gerenciar pacientes da clínica
+          </p>
+        </div>
+        <Button render={<Link href="/pacientes/novo" />}>
           <Plus className="w-4 h-4" />
           Novo Paciente
-        </Link>
-      </PageHeader>
+        </Button>
+      </div>
 
-      <div className="px-8 py-6">
-        <div className="bg-white rounded-xl border border-border overflow-hidden">
+      <Card>
+        <CardHeader>
+          <CardTitle>Todos os Pacientes</CardTitle>
+        </CardHeader>
+        <CardContent className="px-0">
           {pacientes.length === 0 ? (
-            <div className="px-6 py-12 text-center text-gray-500">
-              <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p className="text-lg font-medium text-gray-400">
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Users className="w-12 h-12 text-muted-foreground/30 mb-4" />
+              <p className="text-lg font-medium text-muted-foreground">
                 Nenhum paciente cadastrado
               </p>
-              <p className="text-sm mt-1">
+              <p className="text-sm text-muted-foreground/60 mt-1">
                 Clique em &ldquo;Novo Paciente&rdquo; para cadastrar
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted/50">
-                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Paciente
-                    </th>
-                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Contato
-                    </th>
-                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Data Nasc.
-                    </th>
-                    <th className="text-center px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Consultas
-                    </th>
-                    <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {pacientes.map((pac) => (
-                    <tr key={pac.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center text-sm font-medium">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Paciente</TableHead>
+                  <TableHead>Contato</TableHead>
+                  <TableHead>Data Nasc.</TableHead>
+                  <TableHead className="text-center">Consultas</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {pacientes.map((pac) => (
+                  <TableRow key={pac.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
                             {pac.nome.charAt(0).toUpperCase()}
-                          </div>
-                          <span className="font-medium text-foreground">
-                            {pac.nome}
-                          </span>
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="font-medium">{pac.nome}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">{pac.email || "-"}</div>
+                      {pac.telefone && (
+                        <div className="text-xs text-muted-foreground">
+                          {pac.telefone}
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600">{pac.email || "-"}</div>
-                        {pac.telefone && (
-                          <div className="text-sm text-gray-400">{pac.telefone}</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {pac.dataNascimento ? formatarData(pac.dataNascimento) : "-"}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-600">
-                        {pac._count.agendamentos}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <Link
-                          href={`/pacientes/${pac.id}`}
-                          className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary-dark transition-colors"
-                        >
-                          <Edit className="w-4 h-4" />
-                          Editar
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {pac.dataNascimento ? formatarData(pac.dataNascimento) : "-"}
+                    </TableCell>
+                    <TableCell className="text-center text-muted-foreground">
+                      {pac._count.agendamentos}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm" render={<Link href={`/pacientes/${pac.id}`} />}>
+                        Editar
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -1,8 +1,8 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
 
 export function formatarData(data: Date | string): string {
@@ -12,39 +12,6 @@ export function formatarData(data: Date | string): string {
     month: "2-digit",
     year: "numeric",
   });
-}
-
-export function formatarHora(hora: string): string {
-  return hora;
-}
-
-export function formatarDataHora(data: Date | string): string {
-  const d = new Date(data);
-  return d.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-export function obterDiaSemana(dia: number): string {
-  const dias = [
-    "Domingo",
-    "Segunda-feira",
-    "Terça-feira",
-    "Quarta-feira",
-    "Quinta-feira",
-    "Sexta-feira",
-    "Sábado",
-  ];
-  return dias[dia];
-}
-
-export function obterDiaSemanaAbreviado(dia: number): string {
-  const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-  return dias[dia];
 }
 
 export function statusAgendamento(status: string): {

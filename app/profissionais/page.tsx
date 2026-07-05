@@ -1,6 +1,17 @@
 import { prisma } from "@/lib/prisma";
-import { PageHeader } from "@/components/page-header";
-import { Plus, Edit, Stethoscope } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Plus, Stethoscope } from "lucide-react";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -8,116 +19,105 @@ export const dynamic = "force-dynamic";
 export default async function ProfissionaisPage() {
   const profissionais = await prisma.profissional.findMany({
     orderBy: { nome: "asc" },
-    include: {
-      _count: { select: { agendamentos: true } },
-    },
+    include: { _count: { select: { agendamentos: true } } },
   });
 
   return (
-    <div className="pb-8">
-      <PageHeader title="Profissionais" description="Gerenciar profissionais da clínica">
-        <Link
-          href="/profissionais/novo"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors"
-        >
+    <div className="p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Profissionais</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Gerenciar profissionais da clínica
+          </p>
+        </div>
+        <Button render={<Link href="/profissionais/novo" />}>
           <Plus className="w-4 h-4" />
           Novo Profissional
-        </Link>
-      </PageHeader>
+        </Button>
+      </div>
 
-      <div className="px-8 py-6">
-        <div className="bg-white rounded-xl border border-border overflow-hidden">
+      <Card>
+        <CardHeader>
+          <CardTitle>Todos os Profissionais</CardTitle>
+        </CardHeader>
+        <CardContent className="px-0">
           {profissionais.length === 0 ? (
-            <div className="px-6 py-12 text-center text-gray-500">
-              <Stethoscope className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-              <p className="text-lg font-medium text-gray-400">
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Stethoscope className="w-12 h-12 text-muted-foreground/30 mb-4" />
+              <p className="text-lg font-medium text-muted-foreground">
                 Nenhum profissional cadastrado
               </p>
-              <p className="text-sm mt-1">
+              <p className="text-sm text-muted-foreground/60 mt-1">
                 Clique em &ldquo;Novo Profissional&rdquo; para cadastrar
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-muted/50">
-                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Profissional
-                    </th>
-                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Especialidade
-                    </th>
-                    <th className="text-left px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Contato
-                    </th>
-                    <th className="text-center px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Consultas
-                    </th>
-                    <th className="text-center px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="text-right px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                      Ações
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  {profissionais.map((prof) => (
-                    <tr key={prof.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Profissional</TableHead>
+                  <TableHead>Especialidade</TableHead>
+                  <TableHead>Contato</TableHead>
+                  <TableHead className="text-center">Consultas</TableHead>
+                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {profissionais.map((prof) => (
+                  <TableRow key={prof.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar>
+                          <AvatarFallback
+                            className="text-white text-xs font-medium"
                             style={{ backgroundColor: prof.cor }}
                           >
                             {prof.nome.charAt(0).toUpperCase()}
-                          </div>
-                          <span className="font-medium text-foreground">
-                            {prof.nome}
-                          </span>
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="font-medium">{prof.nome}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {prof.especialidade}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">{prof.email}</div>
+                      {prof.telefone && (
+                        <div className="text-xs text-muted-foreground">
+                          {prof.telefone}
                         </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {prof.especialidade}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600">{prof.email}</div>
-                        {prof.telefone && (
-                          <div className="text-sm text-gray-400">{prof.telefone}</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm text-gray-600">
-                        {prof._count.agendamentos}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                            prof.ativo
-                              ? "bg-emerald-100 text-emerald-700"
-                              : "bg-gray-100 text-gray-500"
-                          }`}
-                        >
-                          {prof.ativo ? "Ativo" : "Inativo"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <Link
-                          href={`/profissionais/${prof.id}`}
-                          className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary-dark transition-colors"
-                        >
-                          <Edit className="w-4 h-4" />
-                          Editar
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center text-muted-foreground">
+                      {prof._count.agendamentos}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge
+                        variant={prof.ativo ? "default" : "secondary"}
+                        className={
+                          prof.ativo
+                            ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100"
+                            : ""
+                        }
+                      >
+                        {prof.ativo ? "Ativo" : "Inativo"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm" render={<Link href={`/profissionais/${prof.id}`} />}>
+                        Editar
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

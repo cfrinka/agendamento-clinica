@@ -13,6 +13,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -28,27 +30,31 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col bg-sidebar text-sidebar-text transition-all duration-300",
+        "flex flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 border-r border-sidebar-border",
         collapsed ? "w-16" : "w-60"
       )}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-white/10">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sidebar-active">
-          <Clock className="w-5 h-5 text-white" />
+      <div className="flex items-center gap-3 px-4 h-16 shrink-0">
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sidebar-primary">
+          <Clock className="w-5 h-5 text-sidebar-primary-foreground" />
         </div>
         {!collapsed && (
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold text-white">
-              Agendamento
+          <div className="flex flex-col min-w-0">
+            <span className="text-sm font-semibold text-sidebar-primary-foreground truncate">
+              Agenda Clínica
             </span>
-            <span className="text-xs text-sidebar-text">Clínica Médica</span>
+            <span className="text-xs text-sidebar-foreground/60 truncate">
+              Sistema de Agendamento
+            </span>
           </div>
         )}
       </div>
 
+      <Separator className="bg-sidebar-border/50" />
+
       {/* Navigation */}
-      <nav className="flex-1 px-2 py-4 space-y-1">
+      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
         {navigation.map((item) => {
           const isActive =
             item.href === "/"
@@ -61,8 +67,8 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-sidebar-active text-white"
-                  : "text-sidebar-text hover:bg-sidebar-hover hover:text-white"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               )}
               title={collapsed ? item.name : undefined}
             >
@@ -74,10 +80,12 @@ export function Sidebar() {
       </nav>
 
       {/* Collapse button */}
-      <div className="p-2 border-t border-white/10">
-        <button
+      <div className="p-2 shrink-0">
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center justify-center w-full p-2 rounded-lg text-sidebar-text hover:bg-sidebar-hover hover:text-white transition-colors"
+          className="w-full text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           title={collapsed ? "Expandir" : "Recolher"}
         >
           {collapsed ? (
@@ -85,7 +93,7 @@ export function Sidebar() {
           ) : (
             <ChevronLeft className="w-5 h-5" />
           )}
-        </button>
+        </Button>
       </div>
     </aside>
   );

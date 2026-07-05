@@ -2,19 +2,27 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { PageHeader } from "@/components/page-header";
-import { ArrowLeft, Save, Trash2, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 interface Paciente {
-  id: number;
-  nome: string;
-  email: string | null;
-  telefone: string | null;
-  dataNascimento: string | null;
-  genero: string | null;
-  endereco: string | null;
-  observacoes: string | null;
+  id: number; nome: string; email: string | null; telefone: string | null;
+  dataNascimento: string | null; genero: string | null;
+  endereco: string | null; observacoes: string | null;
 }
 
 export default function EditarPaciente() {
@@ -24,13 +32,8 @@ export default function EditarPaciente() {
   const [fetching, setFetching] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [form, setForm] = useState({
-    nome: "",
-    email: "",
-    telefone: "",
-    dataNascimento: "",
-    genero: "",
-    endereco: "",
-    observacoes: "",
+    nome: "", email: "", telefone: "", dataNascimento: "",
+    genero: "", endereco: "", observacoes: "",
   });
 
   useEffect(() => {
@@ -92,155 +95,132 @@ export default function EditarPaciente() {
 
   if (fetching) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className="p-6 space-y-6 max-w-2xl">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-96 w-full" />
       </div>
     );
   }
 
   return (
-    <div className="pb-8">
-      <PageHeader title="Editar Paciente">
-        <Link
-          href="/pacientes"
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-border rounded-lg hover:bg-muted transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Voltar
-        </Link>
-      </PageHeader>
+    <div className="p-6 space-y-6 max-w-2xl">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" render={<Link href="/pacientes" />}>
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Editar Paciente</h1>
+          <p className="text-sm text-muted-foreground mt-1">{form.nome}</p>
+        </div>
+      </div>
 
-      <div className="px-8 py-6 max-w-2xl">
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white rounded-xl border border-border p-6 space-y-6"
-        >
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Nome completo
-            </label>
-            <input
-              type="text"
-              required
-              value={form.nome}
-              onChange={(e) => setForm({ ...form, nome: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                E-mail
-              </label>
-              <input
-                type="email"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+      <form onSubmit={handleSubmit}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Dados do Paciente</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="nome">Nome completo</Label>
+              <Input
+                id="nome"
+                required
+                value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Telefone
-              </label>
-              <input
-                type="tel"
-                value={form.telefone}
-                onChange={(e) =>
-                  setForm({ ...form, telefone: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="telefone">Telefone</Label>
+                <Input
+                  id="telefone"
+                  type="tel"
+                  value={form.telefone}
+                  onChange={(e) => setForm({ ...form, telefone: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="dataNascimento">Data de nascimento</Label>
+                <Input
+                  id="dataNascimento"
+                  type="date"
+                  value={form.dataNascimento}
+                  onChange={(e) => setForm({ ...form, dataNascimento: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Gênero</Label>
+                <Select
+                  value={form.genero}
+                  onValueChange={(v) => setForm({ ...form, genero: v ?? "" })}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Selecione..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Masculino">Masculino</SelectItem>
+                    <SelectItem value="Feminino">Feminino</SelectItem>
+                    <SelectItem value="Outro">Outro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="endereco">Endereço</Label>
+              <Input
+                id="endereco"
+                value={form.endereco}
+                onChange={(e) => setForm({ ...form, endereco: e.target.value })}
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Data de nascimento
-              </label>
-              <input
-                type="date"
-                value={form.dataNascimento}
-                onChange={(e) =>
-                  setForm({ ...form, dataNascimento: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+            <div className="space-y-2">
+              <Label htmlFor="observacoes">Observações</Label>
+              <Textarea
+                id="observacoes"
+                value={form.observacoes}
+                onChange={(e) => setForm({ ...form, observacoes: e.target.value })}
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gênero
-              </label>
-              <select
-                value={form.genero}
-                onChange={(e) => setForm({ ...form, genero: e.target.value })}
-                className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-              >
-                <option value="">Selecione...</option>
-                <option value="Masculino">Masculino</option>
-                <option value="Feminino">Feminino</option>
-                <option value="Outro">Outro</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Endereço
-            </label>
-            <input
-              type="text"
-              value={form.endereco}
-              onChange={(e) => setForm({ ...form, endereco: e.target.value })}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Observações
-            </label>
-            <textarea
-              value={form.observacoes}
-              onChange={(e) =>
-                setForm({ ...form, observacoes: e.target.value })
-              }
-              rows={3}
-              className="w-full px-3 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors resize-none"
-            />
-          </div>
-
-          <div className="flex items-center justify-between pt-4 border-t border-border">
-            <button
+          </CardContent>
+          <Separator />
+          <div className="flex items-center justify-between px-6 py-4">
+            <Button
               type="button"
+              variant="destructive"
+              size="sm"
               onClick={handleDelete}
               disabled={deleting}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 disabled:opacity-50 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
               {deleting ? "Excluindo..." : "Excluir"}
-            </button>
+            </Button>
             <div className="flex items-center gap-3">
-              <Link
-                href="/pacientes"
-                className="px-6 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors"
-              >
+              <Button variant="outline" render={<Link href="/pacientes" />}>
                 Cancelar
-              </Link>
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark disabled:opacity-50 transition-colors"
-              >
+              </Button>
+              <Button type="submit" disabled={loading}>
                 <Save className="w-4 h-4" />
                 {loading ? "Salvando..." : "Salvar"}
-              </button>
+              </Button>
             </div>
           </div>
-        </form>
-      </div>
+        </Card>
+      </form>
     </div>
   );
 }
