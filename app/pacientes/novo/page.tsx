@@ -14,8 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import Link from "next/link";
 
 export default function NovoPaciente() {
@@ -47,28 +46,28 @@ export default function NovoPaciente() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="max-w-3xl space-y-6 pb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-muted-foreground/70 mb-2">
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
             Novo paciente
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight">Cadastrar Paciente</h1>
-          <p className="text-sm text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Cadastrar Paciente</h1>
+          <p className="text-sm text-muted-foreground/80 mt-1.5">
             Preencha os dados do paciente
           </p>
         </div>
-        <Button variant="outline" render={<Link href="/pacientes" />}>
+        <Button variant="outline" render={<Link href="/pacientes" />} className="rounded-xl">
           Voltar
         </Button>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Dados do Paciente</CardTitle>
+        <Card className="border border-border/60 shadow-sm rounded-2xl">
+          <CardHeader className="px-6 pt-6 pb-4">
+            <CardTitle className="text-base font-semibold">Dados do Paciente</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-5">
+          <CardContent className="space-y-5 px-6 pb-6">
             <div className="space-y-2">
               <Label htmlFor="nome">Nome completo</Label>
               <Input
@@ -151,12 +150,12 @@ export default function NovoPaciente() {
               />
             </div>
           </CardContent>
-          <Separator />
+          <div className="border-t border-border/50" />
           <div className="flex items-center justify-end gap-3 px-6 py-4">
-            <Button variant="outline" render={<Link href="/pacientes" />}>
+            <Button variant="outline" render={<Link href="/pacientes" />} className="rounded-xl">
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="shadow-sm shadow-primary/15 rounded-xl">
               <Save className="w-4 h-4" />
               {loading ? "Salvando..." : "Salvar"}
             </Button>

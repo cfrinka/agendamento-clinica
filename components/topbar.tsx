@@ -50,29 +50,34 @@ function Topbar() {
   const PageIcon = iconMap[currentRoute] ?? LayoutDashboard;
 
   return (
-    <div className="sticky top-0 z-20 border-b border-border/80 bg-background/95 backdrop-blur-xl">
-      <div className="mx-auto flex flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 xl:flex-row xl:items-center xl:justify-between">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3 text-sm text-muted-foreground">
-            <PageIcon className="w-4 h-4" />
-            <span className="font-medium text-foreground">{breadcrumbMap[currentRoute]?.label}</span>
+    <div className="sticky top-0 z-20 border-b border-border/60 bg-background/70 backdrop-blur-2xl supports-backdrop-blur:bg-background/60 [&:not(:has(~*))]:border-transparent">
+      <div className="mx-auto flex flex-col gap-3 px-0 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-primary/10 text-primary">
+              <PageIcon className="w-4 h-4" />
+            </div>
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">{breadcrumbMap[currentRoute]?.label}</h2>
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <Link href="/" className="transition-colors hover:text-foreground">
-              Dashboard
-            </Link>
-            <ChevronRight className="h-3 w-3" />
-            {crumbs.map((crumb, index) => (
-              <span key={crumb.href} className={cn(index === crumbs.length - 1 && "text-foreground font-medium") }>
-                {crumb.label}
-                {index < crumbs.length - 1 && <ChevronRight className="ml-2 inline h-3 w-3" />}
-              </span>
-            ))}
-          </div>
+          {crumbs.length > 0 && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground/70 pl-[42px]">
+              <Link href="/" className="transition-colors hover:text-foreground">
+                Dashboard
+              </Link>
+              {crumbs.map((crumb, index) => (
+                <span key={crumb.href} className="flex items-center gap-1.5">
+                  <ChevronRight className="h-3 w-3 text-muted-foreground/40" />
+                  <span className={cn(index === crumbs.length - 1 && "text-foreground/80 font-medium")}>
+                    {crumb.label}
+                  </span>
+                </span>
+              ))}
+            </div>
+          )}
         </div>
 
         {action ? (
-          <Button size="lg" render={<Link href={action.href} />}>
+          <Button render={<Link href={action.href} />} className="shadow-sm shadow-primary/10">
             <ActionIcon className="w-4 h-4" />
             {action.label}
           </Button>

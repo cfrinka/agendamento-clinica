@@ -31,12 +31,12 @@ export default function RootLayout({
     >
       <body className="flex min-h-screen overflow-hidden bg-background text-foreground">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto bg-muted/85 backdrop-blur-sm">
-          <div className="min-h-screen py-8">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <main className="flex-1 overflow-y-auto">
+          <div className="min-h-screen">
+            <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10 pt-6 pb-12">
               <Topbar />
+              <div className="mt-2 animate-fade-in">{children}</div>
             </div>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
           </div>
         </main>
       </body>

@@ -13,8 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Save, Trash2 } from "lucide-react";
+import { Save, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 const especialidades = [
@@ -89,28 +88,28 @@ export function ProfissionalForm({ profissional }: ProfissionalFormProps) {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="max-w-3xl space-y-6 pb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-muted-foreground/70 mb-2">
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
             Editar profissional
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight">{profissional.nome}</h1>
-          <p className="text-sm text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{profissional.nome}</h1>
+          <p className="text-sm text-muted-foreground/80 mt-1.5">
             Atualize os dados do profissional
           </p>
         </div>
-        <Button variant="outline" render={<Link href="/profissionais" />}>
+        <Button variant="outline" render={<Link href="/profissionais" />} className="rounded-xl">
           Voltar
         </Button>
       </div>
 
       <form onSubmit={handleSubmit}>
-        <Card>
-          <CardHeader>
-            <CardTitle>Dados do Profissional</CardTitle>
+        <Card className="border border-border/60 shadow-sm rounded-2xl">
+          <CardHeader className="px-6 pt-6 pb-4">
+            <CardTitle className="text-base font-semibold">Dados do Profissional</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-5">
+          <CardContent className="space-y-5 px-6 pb-6">
             <div className="space-y-2">
               <Label htmlFor="nome">Nome completo</Label>
               <Input
@@ -190,7 +189,7 @@ export function ProfissionalForm({ profissional }: ProfissionalFormProps) {
               <Label htmlFor="ativo" className="font-medium">Profissional ativo</Label>
             </div>
           </CardContent>
-          <Separator />
+          <div className="border-t border-border/50" />
           <div className="flex items-center justify-between px-6 py-4">
             <Button
               type="button"
@@ -198,15 +197,16 @@ export function ProfissionalForm({ profissional }: ProfissionalFormProps) {
               size="sm"
               onClick={handleDelete}
               disabled={deleting}
+              className="rounded-xl"
             >
               <Trash2 className="w-4 h-4" />
               {deleting ? "Excluindo..." : "Excluir"}
             </Button>
             <div className="flex items-center gap-3">
-              <Button variant="outline" render={<Link href="/profissionais" />}>
+              <Button variant="outline" render={<Link href="/profissionais" />} className="rounded-xl">
                 Cancelar
               </Button>
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading} className="shadow-sm shadow-primary/15 rounded-xl">
                 <Save className="w-4 h-4" />
                 {loading ? "Salvando..." : "Salvar"}
               </Button>

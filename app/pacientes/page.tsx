@@ -23,28 +23,28 @@ export default async function PacientesPage() {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+    <div className="space-y-6 pb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-muted-foreground/70 mb-2">
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
             Gestão de pacientes
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight">Pacientes</h1>
-          <p className="text-sm text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Pacientes</h1>
+          <p className="text-sm text-muted-foreground/80 mt-1.5">
             Gerenciar pacientes da clínica
           </p>
         </div>
-        <Button render={<Link href="/pacientes/novo" />}>
+        <Button render={<Link href="/pacientes/novo" />} className="shadow-sm shadow-primary/15">
           <Plus className="w-4 h-4" />
           Novo Paciente
         </Button>
       </div>
 
-      <Card className="border border-border shadow-sm">
-        <CardHeader>
-          <CardTitle>Todos os Pacientes</CardTitle>
+      <Card className="border border-border/60 shadow-sm rounded-2xl">
+        <CardHeader className="px-6 pt-6 pb-4">
+          <CardTitle className="text-base font-semibold">Todos os Pacientes</CardTitle>
         </CardHeader>
-        <CardContent className="px-0">
+        <CardContent className="px-0 pb-0">
           {pacientes.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Users className="w-12 h-12 text-muted-foreground/30 mb-4" />

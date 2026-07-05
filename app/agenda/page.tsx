@@ -31,18 +31,18 @@ export default async function AgendaPage() {
   ]) as [ProfissionalAgenda[], AgendamentoComRelacoes[]];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+    <div className="space-y-6 pb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-muted-foreground/70 mb-2">
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 mb-2">
             Agenda clínica
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight">Agenda</h1>
-          <p className="text-sm text-muted-foreground mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Agenda</h1>
+          <p className="text-sm text-muted-foreground/80 mt-1.5">
             Visualize e gerencie os agendamentos
           </p>
         </div>
-        <Button render={<Link href="/agenda/novo" />}>
+        <Button render={<Link href="/agenda/novo" />} className="shadow-sm shadow-primary/15">
           <Plus className="w-4 h-4" />
           Novo Agendamento
         </Button>
